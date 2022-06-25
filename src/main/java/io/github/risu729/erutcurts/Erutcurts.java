@@ -19,7 +19,7 @@ public final class Erutcurts {
 
   public static void main(String[] args) throws LoginException, InterruptedException {
     JDABuilder.createDefault(System.getenv().get("BOT_TOKEN"))
-        .setActivity(Activity.playing("JDA"))
+        .setActivity(Activity.playing("Just attach your structure files. / !ping"))
         .addEventListeners(new PingListener(), new SimpleStructureListener(TEMP_DIR))
         .build()
         .awaitReady();

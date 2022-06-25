@@ -1,2 +1,2 @@
 # erutcurts
-A Discord bot to convert mcbe structure files to addons.
+The Discord bot supports Minecraft Bedrock structures.
