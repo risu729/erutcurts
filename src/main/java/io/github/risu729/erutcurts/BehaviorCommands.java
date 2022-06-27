@@ -48,8 +48,7 @@ final class BehaviorCommands {
     } catch (IOException e) {
       throw new UncheckedIOException(e);
     }
-    message.reply("")
-        .addFile(packPath.toFile())
+    message.reply(packPath.toFile())
         .mentionRepliedUser(false)
         .setActionRow(ButtonUtils.SINGLE, ButtonUtils.MULTI.asDisabled(),
             ButtonUtils.INDEX, ButtonUtils.DELETE, ButtonUtils.HELP)
