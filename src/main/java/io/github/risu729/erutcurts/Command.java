@@ -15,10 +15,10 @@ enum Command {
   
   HELP("help"),
   MULTI("multi", "m"),
-  SINGLE("single", "s");
+  SINGLE("single", "s"),
+  PACKAGE("package", "p");
   // INDEX("index", "i"),
   // DELETE("delete", "d"),
-  // PACKAGE(),
   // END();
 
   public static final char PREFIX = '.';

@@ -14,7 +14,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.concurrent.ExecutionException;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.utils.FileProxy;
@@ -39,7 +38,7 @@ final class BehaviorCommands {
                   throw new UndeclaredThrowableException(e);
                 }
               })
-              .collect(Collectors.toList()))
+              .toList())
           .build()
           .generateBehavior(attachmentsDir);
       if (Files.size(packPath) > message.getJDA().getSelfUser().getAllowedFileSize()) {
@@ -50,8 +49,8 @@ final class BehaviorCommands {
     }
     message.reply(packPath.toFile())
         .mentionRepliedUser(false)
-        .setActionRow(ButtonUtils.SINGLE, ButtonUtils.MULTI.asDisabled(),
-            ButtonUtils.INDEX, ButtonUtils.DELETE, ButtonUtils.HELP)
+        .setActionRow(CustomizedButton.SINGLE, CustomizedButton.MULTI.asDisabled(),
+            CustomizedButton.INDEX, CustomizedButton.DELETE, CustomizedButton.HELP)
         .queue();
     FileUtils.deleteQuietly(attachmentsDir.toFile());
   }

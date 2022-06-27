@@ -22,7 +22,7 @@ final class UtilCommands {
     long time = System.currentTimeMillis();
     message.replyEmbeds(embedBuilder.build())
         .mentionRepliedUser(false)
-        .setActionRow(ButtonUtils.DELETE, ButtonUtils.HELP_URL)
+        .setActionRow(CustomizedButton.DELETE, CustomizedButton.HELP_URL)
         .queue(m -> m.editMessageEmbeds(embedBuilder.setFooter(
             "ping " + (System.currentTimeMillis() - time) + "ms").build()).queue());
   }
@@ -34,7 +34,7 @@ final class UtilCommands {
         .setDescription(throwable.getMessage())
         .build())
     .mentionRepliedUser(false)
-    .setActionRow(ButtonUtils.DELETE, ButtonUtils.HELP)
+    .setActionRow(CustomizedButton.DELETE, CustomizedButton.HELP)
     .queue();
   }
 
