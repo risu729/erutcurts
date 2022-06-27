@@ -10,7 +10,6 @@ package io.github.risu729.erutcurts.generator;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Objects;
 
 import net.lingala.zip4j.ZipFile;
 import org.apache.commons.io.FileUtils;
