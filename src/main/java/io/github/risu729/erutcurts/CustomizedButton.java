@@ -18,7 +18,7 @@ final class CustomizedButton {
   public static final Button DELETE = Button.of(ButtonStyle.DANGER, "delete", "Delete");
   public static final Button HELP = Button.of(ButtonStyle.SECONDARY, "help", "Help");
   public static final Button HELP_URL = Button.of(
-      ButtonStyle.LINK, "https://github.com/risu729/erutcurts/blob/main/README.md", "Help");
+      ButtonStyle.LINK, "https://github.com/risu729/erutcurts/blob/main/README.md", "More");
 
   private CustomizedButton() {
     throw new AssertionError();

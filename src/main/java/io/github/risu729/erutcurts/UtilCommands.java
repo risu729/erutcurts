@@ -14,6 +14,10 @@ import net.dv8tion.jda.api.entities.Message;
 
 final class UtilCommands {
 
+  private UtilCommands() {
+    throw new AssertionError();
+  }
+
   public static void replyHelp(Message message) {
     var embedBuilder = new EmbedBuilder()
         .setTitle("Help")
@@ -36,9 +40,5 @@ final class UtilCommands {
     .mentionRepliedUser(false)
     .setActionRow(CustomizedButton.DELETE, CustomizedButton.HELP)
     .queue();
-  }
-
-  private UtilCommands() {
-    throw new AssertionError();
   }
 }

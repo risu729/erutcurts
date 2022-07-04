@@ -24,11 +24,11 @@ import io.github.risu729.erutcurts.generator.StructureAddon;
 final class BehaviorCommands {
 
   public static void replyMulti(Message message, List<Message.Attachment> structures) {
-    Path tempDir = Path.of(System.getenv().get("TEMP_DIR"));
+    Path tempDir = Path.of(System.getProperty("java.io.tmpdir"));
     Path attachmentsDir;
     Path packPath;
     try {
-      attachmentsDir = Files.createTempDirectory(Files.createDirectories(tempDir), "ER");
+      attachmentsDir = Files.createTempDirectory(tempDir, "ER");
       packPath = new StructureAddon.Builder(tempDir)
           .structures(structures.stream()
               .map(a -> {
@@ -42,7 +42,7 @@ final class BehaviorCommands {
           .build()
           .generateBehavior(attachmentsDir);
       if (Files.size(packPath) > message.getJDA().getSelfUser().getAllowedFileSize()) {
-        throw new IllegalArgumentException("generated behavior pack size exceeds the maximum allowed size: " + Files.size(packPath));
+        throw new IllegalArgumentException("Generated behavior pack size exceeds the allowed size: " + Files.size(packPath) + "byte");
       }
     } catch (IOException e) {
       throw new UncheckedIOException(e);
@@ -56,7 +56,7 @@ final class BehaviorCommands {
   }
 
   public static void replySingle(Message message, List<Message.Attachment> structures) {
-    message.reply("currently unsupported").queue();
+    message.reply("currently unsupported").queue(); // TODO
   }
 
   private BehaviorCommands() {

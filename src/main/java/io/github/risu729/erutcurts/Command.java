@@ -12,14 +12,10 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 enum Command {
-  
+
   HELP("help"),
-  MULTI("multi", "m"),
-  SINGLE("single", "s"),
-  PACKAGE("package", "p");
-  // INDEX("index", "i"),
-  // DELETE("delete", "d"),
-  // END();
+  PACKAGE("package", "p"),
+  GENERATE("generate", "g");
 
   public static final char PREFIX = '.';
 
@@ -29,7 +25,14 @@ enum Command {
         return e;
       }
     }
-    throw new IllegalArgumentException("undefined command: " + command);
+    return null;
+  }
+
+  public static boolean isCommand(String str) {
+    return Arrays.stream(Command.values())
+        .map(Command::getCommands)
+        .flatMap(Set::stream)
+        .anyMatch(str::equalsIgnoreCase);
   }
 
   private final Set<String> commands;
@@ -40,7 +43,7 @@ enum Command {
     }
     this.commands = Arrays.stream(commands).map(s -> PREFIX + s).collect(Collectors.toSet());
   }
-  
+
   public Set<String> getCommands() {
     return commands;
   }

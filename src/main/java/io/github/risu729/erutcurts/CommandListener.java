@@ -7,76 +7,96 @@
 
 package io.github.risu729.erutcurts;
 
-import java.util.EnumSet;
-import java.util.function.Predicate;
+import java.lang.reflect.UndeclaredThrowableException;
+import java.time.Duration;
+import java.time.OffsetDateTime;
+import java.util.concurrent.ExecutionException;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.MessageChannel;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
+import net.dv8tion.jda.api.utils.TimeUtil;
 
 import io.github.risu729.erutcurts.generator.StructureAddon;
 
 final class CommandListener extends ListenerAdapter {
 
-  private static final Pattern COMMANDS_SEPARATOR = Pattern.compile(" ");
   private static final int HISTORY_LIMIT = 100;
+  private static final Duration MAX_PACKAGE_MODE_DURATION = Duration.ofDays(1);
 
-  private final Map<MessageChannel, Boolean> packageStatuses = new HashMap<>();
+  private final Map<MessageChannel, OffsetDateTime> packageModeChannels = new HashMap<>();
 
   @Override
-  public void onMessageReceived(MessageReceivedEvent event){
-    try {
+  public void onMessageReceived(MessageReceivedEvent event) {
+
+    MessageChannel channel = event.getChannel();
     Message message = event.getMessage();
+    boolean isPackageMode = packageModeChannels.containsKey(channel);
+
+    // send alert if MAX_PACKAGE_MODE_DURATION passed since package command is sent
+    if (isPackageMode &&
+        Duration.between(packageModeChannels.get(channel), OffsetDateTime.now()).compareTo(MAX_PACKAGE_MODE_DURATION) > 0) {
+      PackageCommands.sendLongStandbyAlert(channel);
+    }
+
+    // ignore bot messages
     if (message.getAuthor().isBot()) {
       return;
     }
-    boolean isPackage = /*packageStatuses.getOrDefault((message.getChannel()), false);*/ true;
 
-    if (isPackage) {
-      message.reply(message.getChannel()
-        .getHistoryBefore(message, HISTORY_LIMIT)
-        .submit()
-        .get()
-        .getRetrievedHistory()
-        .stream()
-        .map(Message::getContentRaw)
-        .toList()
-        .toString()).queue();
-    }
-    } catch (Exception e) {}
-    
-    /*EnumSet<Command> commandSet = COMMANDS_SEPARATOR.splitAsStream(event.getMessage().getContentRaw())
-          .filter(Predicate.not(String::isBlank))
-          .filter(s -> s.charAt(0) == Command.PREFIX)
-          .map(Command::fromString)
-          .collect(Collectors.toCollection(() -> EnumSet.noneOf(Command.class)));
-    List<Message.Attachment> structureList = message.getAttachments()
-        .stream()
-        .filter(e -> StructureAddon.STRUCTURE_EXTENSIONS.contains(e.getFileExtension()))
-        .toList();
-    if (commandSet.isEmpty()) {
-      if (!isWaiting && !structureList.isEmpty()) {
-        BehaviorCommands.replyMulti(message, structureList);
+    Command command = Command.fromString(message.getContentRaw());
+    if (command == null) {
+      if (isPackageMode) {
+        return;
       }
-      return;
+      command = Command.GENERATE;
     }
-    if (commandSet.contains(Command.PACKAGE)) {
-      isWaiting = true;
+    switch(command) {
+      case HELP -> UtilCommands.replyHelp(message);
+      case PACKAGE -> packageModeChannels.put(channel, TimeUtil.getTimeCreated(message));
+      case GENERATE -> {
+        List<Message> targetMessages = new LinkedList<>();
+        targetMessages.add(message);
+        if (message.getReferencedMessage() != null) {
+          targetMessages.add(message.getReferencedMessage());
+        }
+        // add all structures since package command is sent
+        if (isPackageMode) {
+          packageModeChannels.remove(channel);
+          List<Message> history;
+          try {
+            history = channel.getHistoryBefore(message, HISTORY_LIMIT)
+                .submit()
+                .get()
+                .getRetrievedHistory();
+          } catch (ExecutionException | InterruptedException e) {
+            throw new UndeclaredThrowableException(e);
+          }
+          int packageIndex = history.stream()
+              .map(Message::getContentRaw)
+              .map(Command::fromString)
+              .toList()
+              .indexOf(Command.PACKAGE);
+          targetMessages.addAll(history.subList(0, packageIndex == -1 ? history.size() : packageIndex + 1));
+        }
+        List<Message.Attachment> structures = targetMessages.stream()
+            .filter(m -> !m.getAuthor().isBot())
+            .map(Message::getAttachments)
+            .flatMap(List::stream)
+            .filter(e -> StructureAddon.STRUCTURE_EXTENSIONS.contains(e.getFileExtension()))
+            .toList();
+        BehaviorCommands.replyMulti(message, structures);
+      }
+      default -> throw new UnsupportedOperationException("Unsuppported Command: " + command);
     }
-    if (commandSet.contains(Command.MULTI)) {
-      BehaviorCommands.replyMulti(message, structureList);
-    }
-    if (commandSet.contains(Command.SINGLE)) {
-      BehaviorCommands.replySingle(message, structureList);
-    }
-    if (commandSet.contains(Command.HELP)) {
-      UtilCommands.replyHelp(message);
-    }*/
+  }
+
+  public Thread getShutdownHook() {
+    return new Thread(() -> packageModeChannels.keySet().forEach(PackageCommands::sendRebootAlert));
   }
 }

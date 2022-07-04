@@ -15,10 +15,12 @@ import net.dv8tion.jda.api.JDABuilder;
 public final class Erutcurts {
 
   public static void main(String[] args) throws LoginException, InterruptedException {
+    var commandListener = new CommandListener();
     JDABuilder.createDefault(System.getenv().get("BOT_TOKEN"))
         .setActivity(Activity.playing(".help"))
-        .addEventListeners(new CommandListener())
+        .addEventListeners(commandListener)
         .build()
         .awaitReady();
+    Runtime.getRuntime().addShutdownHook(commandListener.getShutdownHook());
   }
 }
