@@ -27,7 +27,7 @@ import io.github.risu729.erutcurts.generator.StructureAddon;
 final class CommandListener extends ListenerAdapter {
 
   private static final int HISTORY_LIMIT = 100;
-  private static final Duration MAX_PACKAGE_MODE_DURATION = /*Duration.ofDays(1);*/ Duration.ofSeconds(3);
+  private static final Duration MAX_PACKAGE_MODE_DURATION = Duration.ofDays(1);
 
   private final Map<MessageChannel, OffsetDateTime> packageModeChannels = new HashMap<>();
 
@@ -62,6 +62,7 @@ final class CommandListener extends ListenerAdapter {
       case PACKAGE -> {
         packageModeChannels.put(channel, TimeUtil.getTimeCreated(message));
         message.addReaction("U+2705").queue();
+        System.out.println(packageModeChannels); // debug
       }
       case GENERATE -> {
         List<Message> targetMessages = new LinkedList<>();
