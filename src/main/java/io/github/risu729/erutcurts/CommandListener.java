@@ -55,7 +55,7 @@ final class CommandListener extends ListenerAdapter {
       if (isPackageMode) {
         return;
       }
-      command = Command.GENERATE;
+      command = Command.AUTO_GENERATE;
     }
     switch(command) {
       case HELP -> UtilCommands.replyHelp(message);
@@ -64,7 +64,7 @@ final class CommandListener extends ListenerAdapter {
         message.addReaction("U+2705").queue();
         System.out.println(packageModeChannels); // debug
       }
-      case GENERATE -> {
+      case GENERATE, AUTO_GENERATE -> {
         List<Message> targetMessages = new LinkedList<>();
         targetMessages.add(message);
         if (message.getReferencedMessage() != null) {
@@ -98,6 +98,9 @@ final class CommandListener extends ListenerAdapter {
             .filter(e -> StructureAddon.STRUCTURE_EXTENSIONS.contains(e.getFileExtension()))
             .toList();
         if (structures.isEmpty()) {
+          if (command == Command.AUTO_GENERATE) {
+            throw new IllegalArgumentException("No structure files are found.");
+          }
           return;
         }
         BehaviorCommands.replyMulti(message, structures);

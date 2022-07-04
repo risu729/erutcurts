@@ -8,6 +8,7 @@
 package io.github.risu729.erutcurts;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -15,7 +16,8 @@ enum Command {
 
   HELP("help"),
   PACKAGE("package", "p"),
-  GENERATE("generate", "g");
+  GENERATE("generate", "g"),
+  AUTO_GENERATE();
 
   public static final char PREFIX = '.';
 
@@ -36,6 +38,10 @@ enum Command {
   }
 
   private final Set<String> commands;
+
+  private Command() {
+    this.commands = Collections.emptySet();
+  }
 
   private Command(String... commands) {
     if (commands == null || commands.length == 0) {
