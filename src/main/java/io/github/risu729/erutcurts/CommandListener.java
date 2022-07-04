@@ -41,6 +41,7 @@ final class CommandListener extends ListenerAdapter {
     // send alert if MAX_PACKAGE_MODE_DURATION passed since package command is sent
     if (isPackageMode &&
         Duration.between(packageModeChannels.get(channel), OffsetDateTime.now()).compareTo(MAX_PACKAGE_MODE_DURATION) > 0) {
+      packageModeChannels.remove(channel);
       PackageCommands.sendLongStandbyAlert(channel);
     }
 
