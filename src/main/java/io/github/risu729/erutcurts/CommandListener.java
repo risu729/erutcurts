@@ -27,7 +27,7 @@ import io.github.risu729.erutcurts.generator.StructureAddon;
 final class CommandListener extends ListenerAdapter {
 
   private static final int HISTORY_LIMIT = 100;
-  private static final Duration MAX_PACKAGE_MODE_DURATION = Duration.ofDays(1);
+  private static final Duration MAX_PACKAGE_MODE_DURATION = /*Duration.ofDays(1);*/ Duration.ofSeconds(3);
 
   private final Map<MessageChannel, OffsetDateTime> packageModeChannels = new HashMap<>();
 
@@ -58,13 +58,17 @@ final class CommandListener extends ListenerAdapter {
     }
     switch(command) {
       case HELP -> UtilCommands.replyHelp(message);
-      case PACKAGE -> packageModeChannels.put(channel, TimeUtil.getTimeCreated(message));
+      case PACKAGE -> {
+        packageModeChannels.put(channel, TimeUtil.getTimeCreated(message));
+        message.addReaction("U+2705").queue();
+      }
       case GENERATE -> {
         List<Message> targetMessages = new LinkedList<>();
         targetMessages.add(message);
         if (message.getReferencedMessage() != null) {
           targetMessages.add(message.getReferencedMessage());
         }
+        
         // add all structures since package command is sent
         if (isPackageMode) {
           packageModeChannels.remove(channel);
@@ -84,12 +88,16 @@ final class CommandListener extends ListenerAdapter {
               .indexOf(Command.PACKAGE);
           targetMessages.addAll(history.subList(0, packageIndex == -1 ? history.size() : packageIndex + 1));
         }
+        
         List<Message.Attachment> structures = targetMessages.stream()
             .filter(m -> !m.getAuthor().isBot())
             .map(Message::getAttachments)
             .flatMap(List::stream)
             .filter(e -> StructureAddon.STRUCTURE_EXTENSIONS.contains(e.getFileExtension()))
             .toList();
+        if (strucutres.isEmpty()) {
+          return;
+        }
         BehaviorCommands.replyMulti(message, structures);
       }
       default -> throw new UnsupportedOperationException("Unsuppported Command: " + command);

@@ -1,3 +1,10 @@
+/*
+ * Copyright (c) 2022 Risu
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ */
+
 package io.github.risu729.erutcurts;
 
 import net.dv8tion.jda.api.entities.MessageChannel;
@@ -9,10 +16,10 @@ final class PackageCommands {
   }
 
   public static void sendLongStandbyAlert(MessageChannel channel) {
-    channel.sendMessage("currently unsupported").queue(); // TODO
+    channel.sendMessage("LongStandbyAlert").queue(); // TODO
   }
 
   public static void sendRebootAlert(MessageChannel channel) {
-    channel.sendMessage("currently unsupported").queue(); // TODO
+    channel.sendMessage("RebootAlert").queue(); // TODO
   }
 }

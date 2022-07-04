@@ -56,7 +56,7 @@ final class BehaviorCommands {
   }
 
   public static void replySingle(Message message, List<Message.Attachment> structures) {
-    message.reply("currently unsupported").queue(); // TODO
+    message.reply("Single Structure Behavior Pack").queue(); // TODO
   }
 
   private BehaviorCommands() {
