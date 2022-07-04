@@ -95,7 +95,7 @@ final class CommandListener extends ListenerAdapter {
             .flatMap(List::stream)
             .filter(e -> StructureAddon.STRUCTURE_EXTENSIONS.contains(e.getFileExtension()))
             .toList();
-        if (strucutres.isEmpty()) {
+        if (structures.isEmpty()) {
           return;
         }
         BehaviorCommands.replyMulti(message, structures);
