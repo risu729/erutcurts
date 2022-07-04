@@ -36,7 +36,7 @@ public final class StructureAddon {
       .versions(SemVer.of(0, 1, 0))
       .build();
 
-  private static final Path DEFAULT_PACK_ICON = Path.of("src", "main", "default_pack_icon.png");
+  private static final Path DEFAULT_PACK_ICON = Path.of("src", "main", "resources", "default_pack_icon.png");
   private static final Path DEFAULT_TEMP_DIR = Path.of("temp");
 
   private static final Pattern DIRECTORY_NAME_REGEX = Pattern.compile(
