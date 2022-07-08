@@ -26,15 +26,13 @@ final class PackageCommands {
   private static final MessageEmbed LONG_STANDBY_EMBED = new EmbedBuilder(ALERT_EMBED_BUILDER)
       .setDescription("""
           Long standby since the Package command.
-          To continue in package mode, press the Dismiss button.""")
+          To continue in package mode, press the Dismiss button. Otherwise, the package mode terminates automatically.""")
       .addField("Note", """
           The maximum number of messages retrieved by the Generate command is 100, including those that do not contain structure files.
           The former messages will be ignored.""", false)
       .build();
   private static final MessageEmbed RESTART_EMBED = new EmbedBuilder(ALERT_EMBED_BUILDER)
-      .setDescription("""
-          This bot will restart in a few seconds.
-          The package mode will reset.""")
+      .setDescription("The package mode will reset in a few seconds due to the restart of the bot.")
       .addField("Note", """
           If you wish to continue, please start over from the beginning.
           We apologize for the inconvenience.""", false)

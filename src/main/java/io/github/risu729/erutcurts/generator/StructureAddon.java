@@ -37,7 +37,7 @@ public final class StructureAddon {
       .build();
 
   private static final Path DEFAULT_PACK_ICON = Path.of("src", "main", "resources", "default_pack_icon.png");
-  private static final Path DEFAULT_TEMP_DIR = Path.of(System.getProperty("java.io.tmpdir"));
+  private static final Path DEFAULT_TEMP_DIR = Path.of("temp");
 
   private static final Pattern DIRECTORY_NAME_REGEX = Pattern.compile(
       "^(?!^(CON|PRN|AUX|NUL|COM[1-9]|LPT[1-9])$)([^\\.<>:\"/\\\\\\|\\?\\*\\x00-\\x20\\x7f][^\\.<>:\"/\\\\\\|\\?\\*\\x00-\\x1f\\x7f]{0,253}[^\\.<>:\"/\\\\\\|\\?\\*\\x00-\\x20\\x7f]|[^\\.<>:\"/\\\\\\|\\?\\*\\x00-\\x20\\x7f])$",
@@ -110,18 +110,16 @@ public final class StructureAddon {
       this.tempDir = tempDir;
     }
 
-    public static Builder copyFrom(StructureAddon other) {
-      return copyFrom(other, other.tempDir);
+    public Builder(StructureAddon other) {
+      this(other, other.tempDir);
     }
 
-    public static Builder copyFrom(StructureAddon other, Path tempDir) {
-      var builder = new Builder();
-      builder.packName(other.packName);
-      builder.manifest(other.manifest);
-      builder.packIcon(other.packIcon);
-      builder.structures(other.structures.values());
-      builder.tempDir = tempDir;
-      return builder;
+    public Builder(StructureAddon other, Path tempDir) {
+      packName(other.packName);
+      manifest(other.manifest);
+      packIcon(other.packIcon);
+      structures(other.structures.values());
+      this.tempDir = tempDir;
     }
 
     public Builder packName(String packName) {
@@ -251,7 +249,7 @@ public final class StructureAddon {
     }
 
     this.packIcon = Objects.requireNonNullElse(builder.packIcon, DEFAULT_PACK_ICON);
-    this.tempDir = Objects.requireNonNullElse(builder.tempDir, DEFAULT_TEMP_DIR);
+    this.tempDir = Objects.requireNonNullElse(builder.tempDir, DEFAULT_TEMP_DIR    );
   }
 
   @Override
