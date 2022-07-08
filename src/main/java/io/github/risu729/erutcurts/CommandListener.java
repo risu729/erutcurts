@@ -66,7 +66,7 @@ final class CommandListener extends ListenerAdapter {
             TimeUtil.getTimeCreated(message).plus(PackageCommands.FIRST_PACKAGE_MODE_ALERT));
         message.addReaction("U+2705").queue();
         System.out.println("Package command"); // TODO: delete these
-        System.out.println(packageModechannels);
+        System.out.println(packageModeChannels);
       }
       case GENERATE, AUTO_GENERATE -> {
         TreeSet<Message> targetMessages = new TreeSet<>(Comparator.comparing(Message::getTimeCreated));
