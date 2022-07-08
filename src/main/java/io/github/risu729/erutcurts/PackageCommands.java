@@ -7,13 +7,14 @@
 
 package io.github.risu729.erutcurts;
 
+import java.time.Duration;
+
 import net.dv8tion.jda.api.entities.MessageChannel;
 
 final class PackageCommands {
 
-  private PackageCommands() {
-    throw new AssertionError();
-  }
+  static final Duration FIRST_PACKAGE_MODE_ALERT = Duration.ofHours(3);
+  static final Duration SECOND_PACKAGE_MODE_ALERT = Duration.ofDays(1);
 
   public static void sendLongStandbyAlert(MessageChannel channel) {
     channel.sendMessage("LongStandbyAlert").queue(); // TODO
@@ -21,5 +22,9 @@ final class PackageCommands {
 
   public static void sendRebootAlert(MessageChannel channel) {
     channel.sendMessage("RebootAlert").queue(); // TODO
+  }
+
+  private PackageCommands() {
+    throw new AssertionError();
   }
 }

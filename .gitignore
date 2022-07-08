@@ -3,7 +3,7 @@
 replit.nix
 
 # Replit eclipse config files
-target
+target/
 .settings
 .classpath
 .project

@@ -11,12 +11,12 @@ import java.awt.Color;
 
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Message;
+import net.dv8tion.jda.api.interactions.components.ActionRow;
 
 final class UtilCommands {
 
-  private UtilCommands() {
-    throw new AssertionError();
-  }
+  private static final ActionRow HELP_ACTION_ROW = ActionRow.of(CustomizedButton.DELETE, CustomizedButton.HELP_URL);
+  private static final ActionRow ERROR_ACTION_ROW = ActionRow.of(CustomizedButton.DELETE, CustomizedButton.HELP);
 
   public static void replyHelp(Message message) {
     var embedBuilder = new EmbedBuilder()
@@ -26,7 +26,7 @@ final class UtilCommands {
     long time = System.currentTimeMillis();
     message.replyEmbeds(embedBuilder.build())
         .mentionRepliedUser(false)
-        .setActionRow(CustomizedButton.DELETE, CustomizedButton.HELP_URL)
+        .setActionRows(HELP_ACTION_ROW)
         .queue(m -> m.editMessageEmbeds(embedBuilder.setFooter(
             "ping " + (System.currentTimeMillis() - time) + "ms").build()).queue());
   }
@@ -38,7 +38,11 @@ final class UtilCommands {
         .setDescription(throwable.getMessage())
         .build())
     .mentionRepliedUser(false)
-    .setActionRow(CustomizedButton.DELETE, CustomizedButton.HELP)
+    .setActionRows(ERROR_ACTION_ROW)
     .queue();
+  }
+
+  private UtilCommands() {
+    throw new AssertionError();
   }
 }

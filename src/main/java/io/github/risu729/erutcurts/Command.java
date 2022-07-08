@@ -9,6 +9,7 @@ package io.github.risu729.erutcurts;
 
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -21,13 +22,13 @@ enum Command {
 
   public static final char PREFIX = '.';
 
-  public static Command fromString(String command) {
+  public static Optional<Command> fromString(String command) {
     for (var e : Command.values()) {
       if (e.getCommands().stream().anyMatch(command::equalsIgnoreCase)) {
-        return e;
+        return Optional.of(e);
       }
     }
-    return null;
+    return Optional.empty();
   }
 
   public static boolean isCommand(String str) {
