@@ -139,7 +139,7 @@ final class CommandListener extends ListenerAdapter {
       packageModeChannels.keySet().forEach(PackageCommands::sendRestartAlert);
     });
     shutdownHook.setPriority(Thread.MIN_PRIORITY);
-    return shtdownHook;
+    return shutdownHook;
     
   }
 }
