@@ -15,31 +15,30 @@ import net.dv8tion.jda.api.interactions.components.ActionRow;
 
 final class UtilCommands {
 
+  private static final EmbedBuilder HELP_EMBED_BUILDER = new EmbedBuilder()
+      .setTitle("Help")
+      .setColor(Color.LIGHT_GRAY)
+      .setDescription("Maybe written later...?");
+  private static final EmbedBuilder ERROR_EMBED_BUILDER = new EmbedBuilder()
+      .setTitle("ERROR")
+      .setColor(Color.RED);
   private static final ActionRow HELP_ACTION_ROW = ActionRow.of(CustomizedButton.DELETE, CustomizedButton.HELP_URL);
   private static final ActionRow ERROR_ACTION_ROW = ActionRow.of(CustomizedButton.DELETE, CustomizedButton.HELP);
 
   public static void replyHelp(Message message) {
-    var embedBuilder = new EmbedBuilder()
-        .setTitle("Help")
-        .setDescription("Maybe written later...?")
-        .setColor(Color.LIGHT_GRAY);
     long time = System.currentTimeMillis();
-    message.replyEmbeds(embedBuilder.build())
-        .mentionRepliedUser(false)
+    message.replyEmbeds(HELP_EMBED_BUILDER.build())
         .setActionRows(HELP_ACTION_ROW)
-        .queue(m -> m.editMessageEmbeds(embedBuilder.setFooter(
+        .mentionRepliedUser(false)
+        .queue(m -> m.editMessageEmbeds(HELP_EMBED_BUILDER.setFooter(
             "ping " + (System.currentTimeMillis() - time) + "ms").build()).queue());
   }
   
   public static void replyError(Message message, Throwable throwable) {
-    message.replyEmbeds(new EmbedBuilder()
-        .setTitle("ERROR")
-        .setColor(Color.RED)
-        .setDescription(throwable.getMessage())
-        .build())
-    .mentionRepliedUser(false)
-    .setActionRows(ERROR_ACTION_ROW)
-    .queue();
+    message.replyEmbeds(ERROR_EMBED_BUILDER.setDescription(throwable.getMessage()).build())
+      .setActionRows(ERROR_ACTION_ROW)
+      .mentionRepliedUser(false)
+      .queue();
   }
 
   private UtilCommands() {

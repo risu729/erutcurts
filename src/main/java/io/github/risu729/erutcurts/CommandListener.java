@@ -39,7 +39,7 @@ final class CommandListener extends ListenerAdapter {
     boolean isPackageMode = packageModeChannels.containsKey(channel);
 
     // send alert if MAX_PACKAGE_MODE_DURATION passed since package command is sent
-    if (isPackageMode && packageModeChannels.get(channel).isAfter(OffsetDateTime.now())) {
+    if (isPackageMode && packageModeChannels.get(channel).isBefore(OffsetDateTime.now())) {
       packageModeChannels.remove(channel);
       PackageCommands.sendLongStandbyAlert(channel);
     }
@@ -56,6 +56,10 @@ final class CommandListener extends ListenerAdapter {
     Command command = commandOptional.orElse(Command.AUTO_GENERATE);
 
     switch(command) {
+      case DEBUG -> {
+        PackageCommands.sendLongStandbyAlert(channel);
+        PackageCommands.sendRestartAlert(channel);
+      }
       case HELP -> UtilCommands.replyHelp(message);
       case PACKAGE -> {
         packageModeChannels.put(channel,

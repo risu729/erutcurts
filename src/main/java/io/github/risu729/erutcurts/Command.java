@@ -15,6 +15,7 @@ import java.util.stream.Collectors;
 
 enum Command {
 
+  DEBUG("debug"), // TODO: delete this
   HELP("help"),
   PACKAGE("package", "p"),
   GENERATE("generate", "g"),

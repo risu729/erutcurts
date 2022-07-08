@@ -12,11 +12,11 @@ import net.dv8tion.jda.api.interactions.components.buttons.ButtonStyle;
 
 final class CustomizedButton {
 
-  public static final Button MULTI = Button.of(ButtonStyle.PRIMARY, "multi", "Multi");
   public static final Button SINGLE = Button.of(ButtonStyle.PRIMARY, "single", "Single");
   public static final Button INDEX = Button.of(ButtonStyle.PRIMARY, "index", "Index");
   public static final Button DELETE = Button.of(ButtonStyle.DANGER, "delete", "Delete");
   public static final Button HELP = Button.of(ButtonStyle.SECONDARY, "help", "Help");
+  public static final Button DISMISS = Button.of(ButtonStyle.DANGER, "dismiss", "Dismiss");
   public static final Button HELP_URL = Button.of(
       ButtonStyle.LINK, "https://github.com/risu729/erutcurts/blob/main/README.md", "More");
 

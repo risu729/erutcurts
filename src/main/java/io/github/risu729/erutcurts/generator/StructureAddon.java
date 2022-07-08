@@ -110,16 +110,18 @@ public final class StructureAddon {
       this.tempDir = tempDir;
     }
 
-    public Builder(StructureAddon other) {
-      this(other, other.tempDir);
+    public static Builder copyFrom(StructureAddon other) {
+      return copyFrom(other, other.tempDir);
     }
 
-    public Builder(StructureAddon other, Path tempDir) {
-      packName(other.packName);
-      manifest(other.manifest);
-      packIcon(other.packIcon);
-      structures(other.structures.values());
-      this.tempDir = tempDir;
+    public static Builder copyFrom(StructureAddon other, Path tempDir) {
+      var builder = new Builder();
+      builder.packName(other.packName);
+      builder.manifest(other.manifest);
+      builder.packIcon(other.packIcon);
+      builder.structures(other.structures.values());
+      builder.tempDir = tempDir;
+      return builder;
     }
 
     public Builder packName(String packName) {
