@@ -37,7 +37,7 @@ public final class StructureAddon {
       .build();
 
   private static final Path DEFAULT_PACK_ICON = Path.of("src", "main", "resources", "default_pack_icon.png");
-  private static final Path DEFAULT_TEMP_DIR = Path.of("temp");
+  private static final Path DEFAULT_TEMP_DIR = Path.of(System.getProperty("java.io.tmpdir"));
 
   private static final Pattern DIRECTORY_NAME_REGEX = Pattern.compile(
       "^(?!^(CON|PRN|AUX|NUL|COM[1-9]|LPT[1-9])$)([^\\.<>:\"/\\\\\\|\\?\\*\\x00-\\x20\\x7f][^\\.<>:\"/\\\\\\|\\?\\*\\x00-\\x1f\\x7f]{0,253}[^\\.<>:\"/\\\\\\|\\?\\*\\x00-\\x20\\x7f]|[^\\.<>:\"/\\\\\\|\\?\\*\\x00-\\x20\\x7f])$",
@@ -249,7 +249,7 @@ public final class StructureAddon {
     }
 
     this.packIcon = Objects.requireNonNullElse(builder.packIcon, DEFAULT_PACK_ICON);
-    this.tempDir = Objects.requireNonNullElse(builder.tempDir, DEFAULT_TEMP_DIR    );
+    this.tempDir = Objects.requireNonNullElse(builder.tempDir, DEFAULT_TEMP_DIR);
   }
 
   @Override

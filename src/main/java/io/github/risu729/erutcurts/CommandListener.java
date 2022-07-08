@@ -65,6 +65,8 @@ final class CommandListener extends ListenerAdapter {
         packageModeChannels.put(channel,
             TimeUtil.getTimeCreated(message).plus(PackageCommands.FIRST_PACKAGE_MODE_ALERT));
         message.addReaction("U+2705").queue();
+        System.out.println("Package command"); // TODO: delete these
+        System.out.println(packageModechannels);
       }
       case GENERATE, AUTO_GENERATE -> {
         TreeSet<Message> targetMessages = new TreeSet<>(Comparator.comparing(Message::getTimeCreated));
@@ -132,7 +134,8 @@ final class CommandListener extends ListenerAdapter {
 
   public Thread getShutdownHook() {
     return new Thread(() -> {
-      System.out.println("Shutdown hook has executed.");
+      System.out.println("Shutdown hook has executed."); // TODO: delete these
+      System.out.println(packageModeChannels);
       packageModeChannels.keySet().forEach(PackageCommands::sendRestartAlert);
     });
   }
