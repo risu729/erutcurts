@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.concurrent.ExecutionException;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 
 import net.dv8tion.jda.api.entities.Message;
@@ -118,6 +119,7 @@ final class BehaviorCommands {
     if (packs.isEmpty()) {
       throw new IllegalArgumentException();
     }
+    packs = new LinkedList<>(packs);
     MessageAction messageAction = message.reply(packs.remove(0).toFile())
         .mentionRepliedUser(false)
         .setActionRows(actionRow);

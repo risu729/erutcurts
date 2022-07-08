@@ -23,19 +23,20 @@ final class PackageCommands {
   private static final EmbedBuilder ALERT_EMBED_BUILDER = new EmbedBuilder()
       .setTitle("Alert")
       .setColor(Color.ORANGE);
-  private static final MessageEmbed LONG_STANDBY_EMBED = ALERT_EMBED_BUILDER
+  private static final MessageEmbed LONG_STANDBY_EMBED = new EmbedBuilder(ALERT_EMBED_BUILDER)
       .setDescription("""
           Long standby since the Package command.
-          
           To continue in package mode, press the Dismiss button.""")
       .addField("Note", """
           The maximum number of messages retrieved by the Generate command is 100, including those that do not contain structure files.
           The former messages will be ignored.""", false)
       .build();
-  private static final MessageEmbed RESTART_EMBED = ALERT_EMBED_BUILDER
-      .setDescription("This bot will restart in a few seconds.")
+  private static final MessageEmbed RESTART_EMBED = new EmbedBuilder(ALERT_EMBED_BUILDER)
+      .setDescription("""
+          This bot will restart in a few seconds.
+          The package mode will reset.""")
       .addField("Note", """
-          The package mode will reset, so even if you wish to continue, please start over from the beginning.
+          If you wish to continue, please start over from the beginning.
           We apologize for the inconvenience.""", false)
       .build();
   private static final ActionRow LONG_STANDBY_ACTION_ROW = ActionRow.of(CustomizedButton.DISMISS, CustomizedButton.HELP);
