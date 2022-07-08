@@ -137,6 +137,6 @@ final class CommandListener extends ListenerAdapter {
       System.out.println("Shutdown hook has executed."); // TODO: delete these
       System.out.println(packageModeChannels);
       packageModeChannels.keySet().forEach(PackageCommands::sendRestartAlert);
-    });
+    }).setPriority(Thread.MIN_PRIORITY);
   }
 }
