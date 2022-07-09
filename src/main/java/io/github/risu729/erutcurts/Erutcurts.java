@@ -26,6 +26,7 @@ public final class Erutcurts {
     Runtime.getRuntime().addShutdownHook(new Thread(() -> {
       commandListener.shutdown();
       jda.shutdown();
+      Thread.sleep(5000);
     }, "Shutdown Hook"));
   }
 }
