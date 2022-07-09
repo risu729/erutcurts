@@ -10,17 +10,22 @@ package io.github.risu729.erutcurts;
 import javax.security.auth.login.LoginException;
 
 import net.dv8tion.jda.api.entities.Activity;
+import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 
 public final class Erutcurts {
 
   public static void main(String[] args) throws LoginException, InterruptedException {
     var commandListener = new CommandListener();
-    JDABuilder.createDefault(System.getenv().get("BOT_TOKEN"))
+    JDA jda = JDABuilder.createDefault(System.getenv().get("BOT_TOKEN"))
         .setActivity(Activity.playing(".help"))
         .addEventListeners(commandListener)
+        .setEnableShutdownHook(false)
         .build()
         .awaitReady();
-    Runtime.getRuntime().addShutdownHook(commandListener.getShutdownHook());
+    Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+      commandListener.shutdown();
+      jda.shutdown();
+    }, "Shutdown Hook"));
   }
 }

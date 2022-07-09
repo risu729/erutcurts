@@ -132,14 +132,9 @@ final class CommandListener extends ListenerAdapter {
     }
   }
 
-  public Thread getShutdownHook() {
-    Thread shutdownHook = new Thread(() -> {
-      System.out.println("Shutdown hook has executed."); // TODO: delete these
-      System.out.println(packageModeChannels);
-      packageModeChannels.keySet().forEach(PackageCommands::sendRestartAlert);
-    });
-    shutdownHook.setPriority(Thread.MIN_PRIORITY);
-    return shutdownHook;
-    
+  public void shutdown() {
+    System.out.println("Command Listener Shutdown"); // TODO: delete these
+    System.out.println(packageModeChannels);
+    packageModeChannels.keySet().forEach(PackageCommands::sendRestartAlert);
   }
 }
