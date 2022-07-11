@@ -17,6 +17,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.TreeSet;
 
+import net.dv8tion.jda.api.entities.emoji.Emoji;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.MessageChannel;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
@@ -64,7 +65,7 @@ final class CommandListener extends ListenerAdapter {
       case PACKAGE -> {
         packageModeChannels.put(channel,
             TimeUtil.getTimeCreated(message).plus(PackageCommands.FIRST_PACKAGE_MODE_ALERT));
-        message.addReaction("U+2705").queue();
+        message.addReaction(Emoji.fromUnicode("U+2705")).queue();
         System.out.println("Package command"); // TODO: delete these
         System.out.println(packageModeChannels);
       }

@@ -7,6 +7,7 @@
 
 package io.github.risu729.erutcurts;
 
+import java.lang.reflect.UndeclaredThrowableException;
 import javax.security.auth.login.LoginException;
 
 import net.dv8tion.jda.api.entities.Activity;
@@ -26,7 +27,11 @@ public final class Erutcurts {
     Runtime.getRuntime().addShutdownHook(new Thread(() -> {
       commandListener.shutdown();
       jda.shutdown();
-      Thread.sleep(10000);
+      try {
+        Thread.sleep(10000);
+      } catch (InterruptedException e) {
+        throw new UndeclaredThrowableException(e);
+      }
     }, "Shutdown Hook"));
   }
 }
