@@ -9,50 +9,51 @@ package io.github.risu729.erutcurts;
 
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
 import java.util.Optional;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 enum Command {
 
   DEBUG("debug"), // TODO: delete this
-  HELP("help"),
+  HELP("help", "h"),
   PACKAGE("package", "p"),
+  PACKAGE_CONTINUE("packagecontinue", "pcontinue", "pc"),
   GENERATE("generate", "g"),
   AUTO_GENERATE();
 
-  public static final char PREFIX = '.';
+  public static final String PREFIX = "!.";
 
   public static Optional<Command> fromString(String command) {
-    for (var e : Command.values()) {
-      if (e.getCommands().stream().anyMatch(command::equalsIgnoreCase)) {
-        return Optional.of(e);
-      }
-    }
-    return Optional.empty();
-  }
-
-  public static boolean isCommand(String str) {
     return Arrays.stream(Command.values())
-        .map(Command::getCommands)
-        .flatMap(Set::stream)
-        .anyMatch(str::equalsIgnoreCase);
+        .filter(c -> c.getCommands()
+            .stream()
+            .anyMatch(command::equalsIgnoreCase))
+        .findFirst();
   }
 
-  private final Set<String> commands;
+  private final List<String> commands;
 
   private Command() {
-    this.commands = Collections.emptySet();
+    this.commands = Collections.emptyList();
   }
 
   private Command(String... commands) {
-    if (commands == null || commands.length == 0) {
-      throw new IllegalArgumentException();
-    }
-    this.commands = Arrays.stream(commands).map(s -> PREFIX + s).collect(Collectors.toSet());
+    this.commands = Arrays.stream(commands)
+        .sorted(Comparator.comparingInt(String::length).reversed())
+        .distinct()
+        .map(s -> PREFIX + s)
+        .toList();
   }
 
-  public Set<String> getCommands() {
+  public List<String> getCommands() {
     return commands;
+  }
+
+  public String getFullFormCommand() {
+    if (commands.isEmpty()) {
+      throw new IllegalStateException("no command strings: " + this);
+    }
+    return commands.get(0);
   }
 }

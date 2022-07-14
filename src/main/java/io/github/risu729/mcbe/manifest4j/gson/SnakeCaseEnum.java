@@ -8,7 +8,6 @@
 package io.github.risu729.mcbe.manifest4j.gson;
 
 import java.io.IOException;
-import java.lang.reflect.UndeclaredThrowableException;
 import java.util.function.Predicate;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -54,7 +53,7 @@ final class SnakeCaseEnum implements TypeAdapterFactory {
             .getField(((Enum) constant).name())
             .getAnnotation(SerializedName.class);
       } catch (NoSuchFieldException e) {
-        throw new UndeclaredThrowableException(e);
+        throw new AssertionError(e);
       }
       String str;
       if (annotation == null) {
@@ -62,7 +61,7 @@ final class SnakeCaseEnum implements TypeAdapterFactory {
       } else {
         str = Objects.requireNonNull(annotation.value(), "serialized name must not be null");
         if (stringToConstant.containsKey(str)) {
-          throw new IllegalStateException("serialized names are duplicated : " + str);
+          throw new IllegalStateException("serialized names are duplicated: " + str);
         }
         for (String alternate : annotation.alternate()) {
           Objects.requireNonNull(alternate, "serialized name must not be null");

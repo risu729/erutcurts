@@ -21,6 +21,7 @@ import java.util.TreeMap;
 
 import org.apache.commons.io.FilenameUtils;
 
+import io.github.risu729.erutcurts.Erutcurts;
 import io.github.risu729.mcbe.manifest4j.Header;
 import io.github.risu729.mcbe.manifest4j.Manifest;
 import io.github.risu729.mcbe.manifest4j.Metadata;
@@ -33,11 +34,10 @@ public final class StructureAddon {
 
   private static final Metadata.GeneratedWith ERUTCURTS_GENERATED_WITH = new Metadata.GeneratedWith.Builder()
       .name("Erutcurts")
-      .versions(SemVer.of(0, 1, 0))
+      .versions(SemVer.fromString(Erutcurts.VERSION))
       .build();
 
   private static final Path DEFAULT_PACK_ICON = Path.of("src", "main", "resources", "default_pack_icon.png");
-  private static final Path DEFAULT_TEMP_DIR = Path.of(System.getProperty("java.io.tmpdir"));
 
   private static final Pattern DIRECTORY_NAME_REGEX = Pattern.compile(
       "^(?!^(CON|PRN|AUX|NUL|COM[1-9]|LPT[1-9])$)([^\\.<>:\"/\\\\\\|\\?\\*\\x00-\\x20\\x7f][^\\.<>:\"/\\\\\\|\\?\\*\\x00-\\x1f\\x7f]{0,253}[^\\.<>:\"/\\\\\\|\\?\\*\\x00-\\x20\\x7f]|[^\\.<>:\"/\\\\\\|\\?\\*\\x00-\\x20\\x7f])$",
@@ -249,7 +249,7 @@ public final class StructureAddon {
     }
 
     this.packIcon = Objects.requireNonNullElse(builder.packIcon, DEFAULT_PACK_ICON);
-    this.tempDir = Objects.requireNonNullElse(builder.tempDir, DEFAULT_TEMP_DIR);
+    this.tempDir = Objects.requireNonNullElse(builder.tempDir, Erutcurts.TEMP_DIR);
   }
 
   @Override

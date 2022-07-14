@@ -7,30 +7,36 @@
 
 package io.github.risu729.erutcurts;
 
-import java.lang.reflect.UndeclaredThrowableException;
+import java.nio.file.Path;
 import javax.security.auth.login.LoginException;
 
 import net.dv8tion.jda.api.entities.Activity;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
+import org.apache.commons.io.FileUtils;
 
 public final class Erutcurts {
 
+  public static final String VERSION = "0.4.0";
+  public static final Path TEMP_DIR = Path.of(System.getProperty("java.io.tmpdir")).resolve(Path.of("Erutcurts"));
+
   public static void main(String[] args) throws LoginException, InterruptedException {
-    var commandListener = new CommandListener();
+    var listener = new Listener();
     JDA jda = JDABuilder.createDefault(System.getenv().get("BOT_TOKEN"))
-        .setActivity(Activity.playing(".help"))
-        .addEventListeners(commandListener)
-        .setEnableShutdownHook(false)
+        .setActivity(Activity.playing(Command.HELP.getFullFormCommand()))
+        .addEventListeners(listener)
+        .setEnableShutdownHook(false) // disable shutdown hook of jda to define order of hooks
         .build()
         .awaitReady();
     Runtime.getRuntime().addShutdownHook(new Thread(() -> {
-      commandListener.shutdown();
+      FileUtils.deleteQuietly(TEMP_DIR.toFile());
+      listener.shutdown();
       jda.shutdown();
       try {
-        Thread.sleep(10000);
+        // wait for 1 seconds to queue messages successfully
+        Thread.sleep(1000);
       } catch (InterruptedException e) {
-        throw new UndeclaredThrowableException(e);
+        throw new AssertionError(e);
       }
     }, "Shutdown Hook"));
   }

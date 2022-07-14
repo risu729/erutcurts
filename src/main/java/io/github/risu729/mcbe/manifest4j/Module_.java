@@ -54,7 +54,7 @@ public final class Module_ implements Comparable<Module_> {
   public static Module_ of(Type type) {
     return switch (type) {
       case RESOURCES, DATA, WORLD_TEMPLATE, SKIN_PACK -> new Builder().type(type).build();
-      default -> throw new UnsupportedOperationException("specified type is not supported : " + type);
+      default -> throw new UnsupportedOperationException("specified type is not supported: " + type);
     };
   }
 
@@ -169,13 +169,13 @@ public final class Module_ implements Comparable<Module_> {
         };
         if (entry.getNameCount() == 1) {
           if (!FILE_NAME_REGEX.matcher(entry.toString()).matches()) {
-            throw new IllegalArgumentException("invalid file name : " + entry);
+            throw new IllegalArgumentException("invalid file name: " + entry);
           }
           this.entry = scripts.resolve(entry);
           return this;
         }
       }
-      throw new IllegalArgumentException("entry must be a file directly under \"scripts\" : " + entry);
+      throw new IllegalArgumentException("entry must be a file directly under \"scripts\": " + entry);
     }
 
     public Module_ build() {
@@ -197,7 +197,7 @@ public final class Module_ implements Comparable<Module_> {
           .matches(builder.entry.getFileName())) {
         throw new IllegalStateException(
             "extension of entry must be " + language.getExtension()
-                + " when language is " + language + " : " + builder.entry);
+                + " when language is " + language + ": " + builder.entry);
       }
       this.entry = builder.entry;
     } else {

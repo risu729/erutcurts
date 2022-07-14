@@ -67,14 +67,14 @@ public final class Subpack implements Comparable<Subpack> {
         };
         if (folderName.getNameCount() == 1) {
           if (!FOLDER_NAME_REGEX.matcher(folderName.toString()).matches()) {
-            throw new IllegalArgumentException("invalid folder name : " + folderName);
+            throw new IllegalArgumentException("invalid folder name: " + folderName);
           }
           this.folderName = folderName;
           return this;
         }
       }
       throw new IllegalArgumentException(
-          "folder_name must be a directory directly under \"subpacks\" : " + folderName);
+          "folder_name must be a directory directly under \"subpacks\": " + folderName);
     }
 
     public Builder name(String name) {
@@ -85,7 +85,7 @@ public final class Subpack implements Comparable<Subpack> {
     public Builder memoryTier(Integer memoryTier) {
       if (memoryTier != null && memoryTier < 0) {
         throw new IllegalArgumentException(
-            "memory_tier must not be negative : " + memoryTier);
+            "memory_tier must not be negative: " + memoryTier);
       }
       this.memoryTier = memoryTier;
       return this;

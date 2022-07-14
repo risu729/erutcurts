@@ -7,20 +7,38 @@
 
 package io.github.risu729.erutcurts;
 
+import java.util.Arrays;
+import java.util.Optional;
+
 import net.dv8tion.jda.api.interactions.components.buttons.Button;
 import net.dv8tion.jda.api.interactions.components.buttons.ButtonStyle;
 
-final class CustomizedButton {
+enum CustomizedButton {
 
-  public static final Button SINGLE = Button.of(ButtonStyle.PRIMARY, "single", "Single");
-  public static final Button INDEX = Button.of(ButtonStyle.PRIMARY, "index", "Index");
-  public static final Button DELETE = Button.of(ButtonStyle.DANGER, "delete", "Delete");
-  public static final Button HELP = Button.of(ButtonStyle.SECONDARY, "help", "Help");
-  public static final Button DISMISS = Button.of(ButtonStyle.DANGER, "dismiss", "Dismiss");
-  public static final Button HELP_URL = Button.of(
-      ButtonStyle.LINK, "https://github.com/risu729/erutcurts/blob/main/README.md", "More");
+  SINGLE(ButtonStyle.PRIMARY, "single", "Single"),
+  INDEX(ButtonStyle.PRIMARY, "index", "Index"),
+  DELETE(ButtonStyle.DANGER, "delete", "Delete"),
+  HELP(ButtonStyle.SECONDARY, "help", "Help"),
+  DISMISS(ButtonStyle.DANGER, "dismiss", "Dismiss"),
+  HELP_URL(ButtonStyle.LINK, "https://github.com/risu729/erutcurts/blob/main/README.md", "More");
 
-  private CustomizedButton() {
-    throw new AssertionError();
+  public static Optional<CustomizedButton> fromButton(Button button) {
+    return fromID(button.getId());
+  }
+
+  public static Optional<CustomizedButton> fromID(String id) {
+    return Arrays.stream(CustomizedButton.values())
+        .filter(c -> id.equals(c.toButton().getId()))
+        .findFirst();
+  }
+
+  private final Button button;
+
+  private CustomizedButton(ButtonStyle style, String idOrURL, String label) {
+    button = Button.of(style, idOrURL, label);
+  }
+
+  public Button toButton() {
+    return button;
   }
 }

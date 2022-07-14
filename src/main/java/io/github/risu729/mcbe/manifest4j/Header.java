@@ -144,7 +144,7 @@ public final class Header {
           && baseGameVersion.compareTo(MIN_MCBE_VERSION) < 0) {
         throw new IllegalStateException(
             "base_game_version must be later than or equal to "
-                + MIN_MCBE_VERSION + " : " + baseGameVersion);
+                + MIN_MCBE_VERSION + ": " + baseGameVersion);
       }
       this.baseGameVersion = baseGameVersion;
       return this;

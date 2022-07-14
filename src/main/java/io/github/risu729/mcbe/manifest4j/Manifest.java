@@ -105,7 +105,7 @@ public final class Manifest {
           && (formatVersion < 1 || formatVersion > MAX_FORMAT_VERSION)) {
         throw new IllegalArgumentException(
             "format_version must be a positive integer which is" + MAX_FORMAT_VERSION
-                + "or less : " + formatVersion);
+                + "or less: " + formatVersion);
       }
       this.formatVersion = formatVersion;
       return this;
@@ -249,7 +249,7 @@ public final class Manifest {
           for (var f : EnumSet.complementOf(set)) {
             if (types.contains(f)) {
               throw new IllegalStateException(
-                  "modules must not contain both types of : " + e + " and " + f);
+                  "modules must not contain both types of: " + e + " and " + f);
             }
           }
           break;
@@ -264,7 +264,7 @@ public final class Manifest {
     if (types.contains(Module_.Type.WORLD_TEMPLATE) || types.contains(Module_.Type.SKIN_PACK)) {
       if (builder.header.getMinEngineVersion() != null) {
         throw new IllegalStateException(
-            "min_engine_version must be null if the type of module is skin_pack or world_template : "
+            "min_engine_version must be null if the type of module is skin_pack or world_templat: "
             + builder.header.getMinEngineVersion());
       }
     } else if (this.formatVersion == 2) {
@@ -273,7 +273,7 @@ public final class Manifest {
         headerBuilder.minEngineVersion(Header.MIN_MCBE_VERSION);
       } else if (minEngineVersion.compareTo(Header.MIN_MCBE_VERSION) < 0) {
         throw new IllegalStateException("min_engine_version must be later than or equal to "
-            + Header.MIN_MCBE_VERSION + " : " + minEngineVersion);
+            + Header.MIN_MCBE_VERSION + ": " + minEngineVersion);
       }
     }
 
@@ -287,12 +287,12 @@ public final class Manifest {
     } else {
       if (builder.header.getBaseGameVersion() != null) {
         throw new IllegalStateException(
-            "base_game_version must be null if the type of module is not world_template : "
+            "base_game_version must be null if the type of module is not world_template: "
                 + builder.header.getBaseGameVersion());
       }
       if (builder.header.getLockTemplateOptions() != null) {
         throw new IllegalStateException(
-            "lock_template_options must be null if the type of modules is not world_template : "
+            "lock_template_options must be null if the type of modules is not world_template: "
                 + builder.header.getLockTemplateOptions());
       }
     }

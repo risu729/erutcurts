@@ -24,12 +24,8 @@ final class AddonGenerator {
 
   // world
 
-  private AddonGenerator() {
-    throw new AssertionError();
-  }
-
-  static Path generateBehavior(StructureAddon structureAddon, Path target) throws IOException {
-    Path tempDir = Files.createTempDirectory(Files.createDirectories(structureAddon.getTempDir()), "SB");
+  public static Path generateBehavior(StructureAddon structureAddon, Path target) throws IOException {
+    Path tempDir = Files.createTempDirectory(Files.createDirectories(structureAddon.getTempDir()), "AddonGenerator");
     Path packDir = generateBehaviorDirectory(structureAddon, tempDir);
     Path result =  zip(packDir, target, BEHAVIOR_EXTENSION);
     FileUtils.deleteQuietly(tempDir.toFile());
@@ -73,8 +69,12 @@ final class AddonGenerator {
     }
 
     try (var zipFile = new ZipFile(zipFilePath.toFile())) {
-        zipFile.addFolder(dirToZip.toFile());
+      zipFile.addFolder(dirToZip.toFile());
     }
     return zipFilePath;
+  }
+
+  private AddonGenerator() {
+    throw new AssertionError();
   }
 }

@@ -22,16 +22,23 @@ public final class SemVer implements Comparable<SemVer> {
     return new SemVer(major, minor, patch);
   }
 
+  public static SemVer fromArray(int[] array) {
+    Objects.requireNonNull(array);
+    if (array.length != 3) {
+      throw new IllegalArgumentException("malformed semantic versioning: " + array);
+    }
+    return of(array[0], array[1], array[2]);
+  }
+
   public static SemVer fromString(String str) {
     Objects.requireNonNull(str);
     if (!SEMVER_REGEX.matcher(str).matches()) {
-      throw new IllegalArgumentException("malformed semantic verioning : " + str);
+      throw new IllegalArgumentException("malformed semantic verioning: " + str);
     }
-    int[] arr = Pattern.compile("\\.")
+    return fromArray(Pattern.compile("\\.")
         .splitAsStream(str)
         .mapToInt(Integer::valueOf)
-        .toArray();
-    return of(arr[0], arr[1], arr[2]);
+        .toArray());
   }
 
   private final int major;
@@ -41,7 +48,7 @@ public final class SemVer implements Comparable<SemVer> {
   private SemVer(int major, int minor, int patch) {
     if (major < 0 || minor < 0 || patch < 0) {
       throw new IllegalArgumentException(
-          "invalid semantic versioning : " + major + "." + minor + "." + patch);
+          "invalid semantic versioning: " + major + "." + minor + "." + patch);
     }
     this.major = major;
     this.minor = minor;
@@ -49,7 +56,7 @@ public final class SemVer implements Comparable<SemVer> {
   }
 
   public int[] toArray() {
-    return new int[] { major, minor, patch };
+    return new int[] {major, minor, patch};
   }
 
   @Override
