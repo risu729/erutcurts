@@ -22,6 +22,7 @@ import java.util.Optional;
 import java.util.TreeSet;
 
 import net.dv8tion.jda.api.entities.Message;
+import net.dv8tion.jda.api.entities.MessageChannel;
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
@@ -31,13 +32,13 @@ import io.github.risu729.erutcurts.generator.StructureAddon;
 
 final class Listener extends ListenerAdapter {
 
-  private static final Duration WAIT_CACHE_DELETION = Duration.ofMinutes(1);//ofHours(1); debug
+  private static final Duration WAIT_CACHE_DELETION = Duration.ofMinutes(1);// ofHours(1); debug
 
   private final PackageManager packageManager = new PackageManager();
 
   // key is the ID of sent message
   private final Map<Long, List<Path>> structureCaches = new HashMap<>();
-  private final ScheduledExecutorService cacheDeleteScheduler = SchedulerUtil.newScheduledDaemonThreadPool(1);
+  private final ScheduledExecutorService cacheDeleteScheduler = SchedulerUtil.newScheduledDaemonThreadPool(5);
 
   @Override
   public void onMessageReceived(MessageReceivedEvent event) {
@@ -61,7 +62,9 @@ final class Listener extends ListenerAdapter {
 
       case HELP -> UtilCommands.replyHelp(message);
 
-      case PACKAGE, PACKAGE_CONTINUE -> packageManager.enablePackageMode(message, false);
+      case PACKAGE -> packageManager.enablePackageMode(message, true);
+
+      case PACKAGE_CONTINUE -> packageManager.enablePackageMode(message, false);
 
       case GENERATE, AUTO_GENERATE -> {
         TreeSet<Message> targetMessages = new TreeSet<>(Comparator.comparing(Message::getTimeCreated));
@@ -75,6 +78,7 @@ final class Listener extends ListenerAdapter {
 
         if (isPackageMode) {
           targetMessages.addAll(packageManager.getMessagesInPackage(message));
+          packageManager.disablePackageMode(message.getChannel());
         }
 
         List<Message.Attachment> attachments = targetMessages.stream()
@@ -113,8 +117,10 @@ final class Listener extends ListenerAdapter {
         List<Path> structures = AttachmentUtil.download(attachments, cacheDir);
         Message sentMessage = BehaviorCommands.replyMulti(reference, structures);
         structureCaches.put(sentMessage.getIdLong(), structures);
-        cacheDeleteScheduler.schedule(() -> FileUtils.deleteQuietly(cacheDir.toFile()),
-            WAIT_CACHE_DELETION.toMinutes(), TimeUnit.MINUTES);
+        cacheDeleteScheduler.schedule(() -> {
+          structureCaches.remove(sentMessage.getIdLong());
+          FileUtils.deleteQuietly(cacheDir.toFile());
+        }, WAIT_CACHE_DELETION.toMinutes(), TimeUnit.MINUTES);
       }
       default -> throw new UnsupportedOperationException("Unsuppported Command: " + command);
     }
@@ -123,6 +129,7 @@ final class Listener extends ListenerAdapter {
   @Override
   public void onButtonInteraction(ButtonInteractionEvent event) {
     Message message = event.getMessage();
+    MessageChannel channel = event.getChannel();
 
     // ignore if the button is not created by this bot
     if (message.getAuthor().getIdLong() != event.getJDA().getSelfUser().getIdLong()) {
@@ -131,13 +138,29 @@ final class Listener extends ListenerAdapter {
 
     CustomizedButton button = CustomizedButton.fromID(event.getComponentId()).orElseThrow();
     switch (button) {
+
       case HELP -> UtilCommands.replyHelp(message);
+
       case SINGLE -> {
-        BehaviorCommands.replySingle(event.getMessage(), structureCaches.get(event.getMessage().getIdLong()));
+        BehaviorCommands.replySingle(message, structureCaches.get(message.getIdLong()));
       }
+
       // TODO: support INDEX button
-      case DELETE -> UtilCommands.deleteMessage(message);
-      case DISMISS -> packageManager.enablePackageMode(event.getMessage(), false);
+
+      case OK, DELETE -> UtilCommands.deleteMessage(message);
+
+      case OK_LONG_STANDBY -> {
+        packageManager.cancelTermination(channel);
+        packageManager.disablePackageMode(channel);
+        UtilCommands.deleteMessage(message);
+      }
+
+      case DISMISS_LONG_STANDBY -> {
+        packageManager.cancelTermination(channel);
+        packageManager.enablePackageMode(message, false);
+        UtilCommands.deleteMessage(message);
+      }
+
       default -> throw new UnsupportedOperationException("Unsuppported Button: " + button);
     }
 

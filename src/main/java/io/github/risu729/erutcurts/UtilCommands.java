@@ -10,6 +10,10 @@ package io.github.risu729.erutcurts;
 import static io.github.risu729.erutcurts.CustomizedButton.*;
 
 import java.awt.Color;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.StringWriter;
+import java.io.UncheckedIOException;
 
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Message;
@@ -27,7 +31,7 @@ final class UtilCommands {
       .setTitle("ERROR")
       .setColor(Color.RED);
   private static final ActionRow HELP_ACTION_ROW = ActionRow.of(DELETE.toButton(), HELP_URL.toButton());
-  private static final ActionRow ERROR_ACTION_ROW = ActionRow.of(DELETE.toButton(), HELP.toButton());
+  private static final ActionRow ERROR_ACTION_ROW = ActionRow.of(OK.toButton(), HELP.toButton());
 
   public static void replyHelp(Message message) {
     long time = System.currentTimeMillis();
@@ -36,15 +40,22 @@ final class UtilCommands {
         .mentionRepliedUser(false)
         .queue(m -> m.editMessageEmbeds(new EmbedBuilder(HELP_EMBED)
                 .setFooter(String.format(
-                    "version: %s\nping: %d ms", Erutcurts.VERSION, (System.currentTimeMillis() - time) + "ms"))
+                    "version: %s\nping: %d ms", Erutcurts.VERSION, System.currentTimeMillis() - time))
                 .build())
             .queue());
   }
 
   public static void replyError(Message message, Throwable throwable) {
-    message.replyEmbeds(new EmbedBuilder(ERROR_EMBED_BUILDER)
-            .setDescription(throwable.getMessage())
-            .build())
+    String stackTrace;
+    try (var sw = new StringWriter();
+        var pw = new PrintWriter(sw)) {
+      throwable.printStackTrace(pw);
+      pw.flush();
+      stackTrace = sw.toString();
+    } catch (IOException e) {
+      throw new UncheckedIOException(e);
+    }
+    message.replyEmbeds(new EmbedBuilder(ERROR_EMBED_BUILDER).setDescription(stackTrace).build())
         .setActionRows(ERROR_ACTION_ROW)
         .mentionRepliedUser(false)
         .queue();

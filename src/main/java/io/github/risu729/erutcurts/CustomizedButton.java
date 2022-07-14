@@ -19,7 +19,9 @@ enum CustomizedButton {
   INDEX(ButtonStyle.PRIMARY, "index", "Index"),
   DELETE(ButtonStyle.DANGER, "delete", "Delete"),
   HELP(ButtonStyle.SECONDARY, "help", "Help"),
-  DISMISS(ButtonStyle.DANGER, "dismiss", "Dismiss"),
+  OK(ButtonStyle.SUCCESS, "ok", "OK"),
+  OK_LONG_STANDBY(ButtonStyle.SUCCESS, "ok_long_standby", "OK"),
+  DISMISS_LONG_STANDBY(ButtonStyle.DANGER, "dismiss_long_standby", "Dismiss"),
   HELP_URL(ButtonStyle.LINK, "https://github.com/risu729/erutcurts/blob/main/README.md", "More");
 
   public static Optional<CustomizedButton> fromButton(Button button) {
