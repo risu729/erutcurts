@@ -31,7 +31,7 @@ import io.github.risu729.erutcurts.generator.StructureAddon;
 
 final class Listener extends ListenerAdapter {
 
-  private static final Duration WAIT_CACHE_DELETION = Duration.ofHours(1);
+  private static final Duration WAIT_CACHE_DELETION = Duration.ofMinutes(1);//ofHours(1); debug
 
   private final PackageManager packageManager = new PackageManager();
 
@@ -122,28 +122,27 @@ final class Listener extends ListenerAdapter {
 
   @Override
   public void onButtonInteraction(ButtonInteractionEvent event) {
+    Message message = event.getMessage();
 
     // ignore if the button is not created by this bot
-    if (event.getMessage().getAuthor().getIdLong() != event.getJDA().getSelfUser().getIdLong()) {
+    if (message.getAuthor().getIdLong() != event.getJDA().getSelfUser().getIdLong()) {
       return;
     }
 
     CustomizedButton button = CustomizedButton.fromID(event.getComponentId()).orElseThrow();
-
     switch (button) {
-      case HELP -> UtilCommands.replyHelp(event);
+      case HELP -> UtilCommands.replyHelp(message);
       case SINGLE -> {
         BehaviorCommands.replySingle(event.getMessage(), structureCaches.get(event.getMessage().getIdLong()));
       }
-      case INDEX -> {
-        ;
-      }
-      case DELETE -> {
-        ;
-      }
+      // TODO: support INDEX button
+      case DELETE -> UtilCommands.deleteMessage(message);
       case DISMISS -> packageManager.enablePackageMode(event.getMessage(), false);
       default -> throw new UnsupportedOperationException("Unsuppported Button: " + button);
     }
+
+    // avoid "This interaction failed"
+    event.deferEdit().queue();
   }
 
   public void shutdown() {

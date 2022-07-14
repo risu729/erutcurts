@@ -22,7 +22,7 @@ enum Command {
   GENERATE("generate", "g"),
   AUTO_GENERATE();
 
-  public static final String PREFIX = "!.";
+  public static final String PREFIX = "..";
 
   public static Optional<Command> fromString(String command) {
     return Arrays.stream(Command.values())

@@ -27,8 +27,8 @@ import net.dv8tion.jda.api.interactions.components.ActionRow;
 
 final class PackageManager {
 
-  public static final Duration FIRST_PACKAGE_ALERT = Duration.ofHours(3);
-  public static final Duration SECOND_PACKAGE_ALERT = Duration.ofDays(1);
+  public static final Duration FIRST_PACKAGE_ALERT = Duration.ofMinutes(1);//ofHours(3); debug
+  public static final Duration SECOND_PACKAGE_ALERT = Duration.ofMinutes(2);//ofDays(1); debug
 
   private static final int HISTORY_LIMIT = 100;
 
@@ -74,12 +74,14 @@ final class PackageManager {
 
   private final ScheduledExecutorService longStandbyAlertScheduler = SchedulerUtil.newScheduledDaemonThreadPool(1);
 
-  public void enablePackageMode(Message message, boolean isFirst) {
+  public void enablePackageMode(Message message, boolean isByCommand) {
     MessageChannel channel = message.getChannel();
     packageModeChannels.put(channel.getIdLong(), channel);
-    long delay = (isFirst ? FIRST_PACKAGE_ALERT : SECOND_PACKAGE_ALERT).toMinutes();
+    long delay = (isByCommand ? FIRST_PACKAGE_ALERT : SECOND_PACKAGE_ALERT).toMinutes();
     longStandbyAlertScheduler.schedule(() -> sendLongStandbyAlert(channel), delay, TimeUnit.MINUTES);
-    message.addReaction(Emoji.fromUnicode("U+2705")).queue();
+    if (isByCommand) {
+      message.addReaction(Emoji.fromUnicode("U+2705")).queue(); 
+    }
   }
 
   public void disablePackageMode(MessageChannel channel) {

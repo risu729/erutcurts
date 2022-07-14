@@ -14,7 +14,6 @@ import java.awt.Color;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.MessageEmbed;
-import net.dv8tion.jda.api.interactions.callbacks.IReplyCallback;
 import net.dv8tion.jda.api.interactions.components.ActionRow;
 
 final class UtilCommands {
@@ -37,20 +36,7 @@ final class UtilCommands {
         .mentionRepliedUser(false)
         .queue(m -> m.editMessageEmbeds(new EmbedBuilder(HELP_EMBED)
                 .setFooter(String.format(
-                    "version: %s\nping: &d ms", Erutcurts.VERSION, (System.currentTimeMillis() - time) + "ms"))
-                .build())
-            .queue());
-  }
-
-  public static void replyHelp(IReplyCallback callback) {
-    long time = System.currentTimeMillis();
-    callback.replyEmbeds(HELP_EMBED)
-        .addActionRows(HELP_ACTION_ROW)
-        .mentionRepliedUser(false)
-        .setEphemeral(true)
-        .queue(m -> m.editOriginalEmbeds(new EmbedBuilder(HELP_EMBED)
-                .setFooter(String.format(
-                    "version: %s\nping: &d ms", Erutcurts.VERSION, (System.currentTimeMillis() - time) + "ms"))
+                    "version: %s\nping: %d ms", Erutcurts.VERSION, (System.currentTimeMillis() - time) + "ms"))
                 .build())
             .queue());
   }
@@ -61,6 +47,11 @@ final class UtilCommands {
             .build())
         .setActionRows(ERROR_ACTION_ROW)
         .mentionRepliedUser(false)
+        .queue();
+  }
+
+  public static void deleteMessage(Message message) {
+    message.delete()
         .queue();
   }
 
