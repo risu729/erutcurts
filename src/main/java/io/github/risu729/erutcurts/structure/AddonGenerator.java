@@ -5,7 +5,7 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-package io.github.risu729.erutcurts.generator;
+package io.github.risu729.erutcurts.structure;
 
 import java.io.IOException;
 import java.nio.file.Files;

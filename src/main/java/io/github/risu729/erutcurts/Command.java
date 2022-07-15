@@ -8,19 +8,20 @@
 package io.github.risu729.erutcurts;
 
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Locale;
 import java.util.Optional;
-
+import java.util.stream.Stream;
 enum Command {
 
-  DEBUG("debug"), // TODO: delete this
-  HELP("help", "h"),
-  PACKAGE("package", "p"),
-  PACKAGE_CONTINUE("packagecontinue", "pcontinue", "pc"),
-  GENERATE("generate", "g"),
-  AUTO_GENERATE();
+  DEBUG(true), // TODO: delete this
+  HELP("h"),
+  PACKAGE("p"),
+  PACKAGE_CONTINUE("packagecon", "pcontinue", "pcon"),
+  CANCEL("c"),
+  GENERATE("g"),
+  AUTO_GENERATE(false);
 
   public static final String PREFIX = "..";
 
@@ -34,14 +35,23 @@ enum Command {
 
   private final List<String> commands;
 
-  private Command() {
-    this.commands = Collections.emptyList();
+  {
+    
+  }
+
+  private Command(boolean doIncludeIdentifier) {
+    this(doIncludeIdentifier, new String[0]);
   }
 
   private Command(String... commands) {
-    this.commands = Arrays.stream(commands)
-        .sorted(Comparator.comparingInt(String::length).reversed())
+    this(true, commands);
+  }
+
+  private Command(boolean doIncludeIdentifier, String... commands) {
+    this.commands = Stream.concat(Stream.ofNullable(doIncludeIdentifier ? this.toString().replace("_", "") : null), Arrays.stream(commands))
         .distinct()
+        .map(s -> s.toLowerCase(Locale.ENGLISH))
+        .sorted(Comparator.comparingInt(String::length).reversed())
         .map(s -> PREFIX + s)
         .toList();
   }

@@ -19,8 +19,9 @@ import java.util.List;
 
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.interactions.components.ActionRow;
+import org.apache.commons.io.FileUtils;
 
-import io.github.risu729.erutcurts.generator.StructureAddon;
+import io.github.risu729.erutcurts.structure.StructureAddon;
 
 final class BehaviorCommands {
 
@@ -29,29 +30,35 @@ final class BehaviorCommands {
   private static final ActionRow SINGLE_ACTION_ROW = ActionRow.of(INDEX.toButton(), DELETE.toButton(), HELP.toButton());
 
   public static Message replyMulti(Message message, Collection<Path> structures) {
+    Path tempDir;
     Path packPath;
     try {
-      packPath = StructureAddon.of(structures)
-          .generateBehavior(Files.createTempDirectory(Erutcurts.TEMP_DIR, "BehaviorCommands"));
+      tempDir = Files.createTempDirectory(Erutcurts.TEMP_DIR, "BehaviorCommands");
+      packPath = StructureAddon.of(structures).generateBehavior(tempDir);
     } catch (IOException e) {
       throw new UncheckedIOException(e);
     }
-    return AttachmentUtil.replySingleFile(message, packPath, MULTI_ACTION_ROW);
+    var result = AttachmentUtil.replySingleFile(message, packPath, MULTI_ACTION_ROW);
+    FileUtils.deleteQuietly(tempDir.toFile());
+    return result;
   }
 
   public static List<Message> replySingle(Message message, Collection<Path> structures) {
     if (structures.isEmpty()) {
       throw new IllegalArgumentException("structures are empty: " + structures);
     }
+    Path tempDir;
     List<Path> packPath = new ArrayList<>();
     try {
-      Path uniqueDir = Files.createTempDirectory(Erutcurts.TEMP_DIR, "BehaviorCommands");
+      tempDir = Files.createTempDirectory(Erutcurts.TEMP_DIR, "BehaviorCommands");
       for (var p : structures) {
-        packPath.add(StructureAddon.of(p).generateBehavior(uniqueDir));
+        packPath.add(StructureAddon.of(p).generateBehavior(tempDir));
       }
     } catch (IOException e) {
       throw new UncheckedIOException(e);
     }
-    return AttachmentUtil.replyFiles(message, packPath, SINGLE_ACTION_ROW);
+    var result = AttachmentUtil.replyFiles(message, packPath, SINGLE_ACTION_ROW);
+    FileUtils.deleteQuietly(tempDir.toFile());
+    return result;
   }
 }

@@ -59,4 +59,30 @@ final class PackageModeChannel {
   public boolean cancelAll() {
     return cancelLongStandbyAlert() && cancelPackageTermination();
   }
+
+  @Override
+  public boolean equals(Object obj) {
+    if (this == obj) {
+      return true;
+    }
+    return (obj instanceof PackageModeChannel other)
+        && this.getChannel().getIdLong() == other.getChannel().getIdLong();
+  }
+
+  @Override
+  public int hashCode() {
+    return Long.hashCode(this.getChannel().getIdLong());
+  }
+
+  @Override
+  public String toString() {
+    var str = new StringBuilder();
+    str.append("channel: ");
+    str.append(channel);
+    str.append("\nlongStandbyAlert: ");
+    str.append(longStandbyAlert);
+    str.append("\ncancelPackageTermination: ");
+    str.append(packageTermination);
+    return str.toString();
+  }
 }

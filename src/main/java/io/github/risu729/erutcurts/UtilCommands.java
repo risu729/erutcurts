@@ -14,11 +14,17 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.io.UncheckedIOException;
+import java.util.Arrays;
+import java.util.EnumSet;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.entities.emoji.Emoji;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.interactions.components.ActionRow;
+import net.dv8tion.jda.api.interactions.components.buttons.Button;
 
 final class UtilCommands {
 
@@ -30,8 +36,12 @@ final class UtilCommands {
   private static final EmbedBuilder ERROR_EMBED_BUILDER = new EmbedBuilder()
       .setTitle("ERROR")
       .setColor(Color.RED);
+  private static final EmbedBuilder DEBUG_INFO_EMBED_BUILDER = new EmbedBuilder()
+      .setTitle("DEBUG")
+      .setColor(Color.BLACK);
   private static final ActionRow HELP_ACTION_ROW = ActionRow.of(DELETE.toButton(), HELP_URL.toButton());
   private static final ActionRow ERROR_ACTION_ROW = ActionRow.of(OK.toButton(), HELP.toButton());
+  private static final ActionRow DEBUG_INFO_ACTION_ROW = ActionRow.of(DELETE.toButton());
 
   public static void replyHelp(Message message) {
     long time = System.currentTimeMillis();
@@ -39,8 +49,8 @@ final class UtilCommands {
         .setActionRows(HELP_ACTION_ROW)
         .mentionRepliedUser(false)
         .queue(m -> m.editMessageEmbeds(new EmbedBuilder(HELP_EMBED)
-                .setFooter(String.format(
-                    "version: %s\nping: %d ms", Erutcurts.VERSION, System.currentTimeMillis() - time))
+                .setFooter(String.format("version: %s\nlast restart: %s\nping: %d ms",
+                    Erutcurts.LAST_RESTART.toString(), Erutcurts.VERSION, System.currentTimeMillis() - time))
                 .build())
             .queue());
   }
@@ -61,9 +71,39 @@ final class UtilCommands {
         .queue();
   }
 
-  public static void deleteMessage(Message message) {
-    message.delete()
+  public static void replyDebugInfo(Message message, Object o) {
+    message.replyEmbeds(new EmbedBuilder(DEBUG_INFO_EMBED_BUILDER).setDescription(String.valueOf(o)).build())
+        .setActionRows(DEBUG_INFO_ACTION_ROW)
+        .mentionRepliedUser(false)
         .queue();
+  }
+
+  public static void deleteMessage(Message message) {
+    message.delete().queue();
+  }
+
+  public static void reactCheckMark(Message message) {
+    message.addReaction(Emoji.fromUnicode("U+2705")).queue();
+  }
+
+  public static void disableButtons(Message message, CustomizedButton... buttons) {
+    EnumSet<CustomizedButton> targetButtons = EnumSet.noneOf(CustomizedButton.class);
+    targetButtons.addAll(Arrays.asList(buttons));
+    List<ActionRow> newActionRows = message.getActionRows()
+        .stream() // Stream<ActionRow>
+        .map(actionRow -> actionRow.getComponents()
+            .stream()
+            .map(component -> {
+              if (component instanceof Button button) {
+                var cb = CustomizedButton.fromButton(button).orElseThrow();
+                return targetButtons.contains(cb) ? cb.toButtonDisabled() : cb.toButton();
+              } else {
+                return component;
+              }
+            })
+            .collect(Collectors.collectingAndThen(Collectors.toList(), ActionRow::of)))
+        .toList();
+    message.editMessageComponents(newActionRows).queue();
   }
 
   private UtilCommands() {

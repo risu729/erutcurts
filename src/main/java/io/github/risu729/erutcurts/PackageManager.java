@@ -13,17 +13,13 @@ import java.awt.Color;
 import java.time.Duration;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
-
-import ch.qos.logback.classic.LoggerContext;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import net.dv8tion.jda.api.EmbedBuilder;
-import net.dv8tion.jda.api.entities.emoji.Emoji;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.MessageChannel;
 import net.dv8tion.jda.api.entities.MessageEmbed;
@@ -41,26 +37,22 @@ final class PackageManager {
       .setTitle("Alert")
       .setColor(Color.ORANGE);
   private static final MessageEmbed LONG_STANDBY_EMBED = new EmbedBuilder(ALERT_EMBED_BUILDER)
-      .setDescription(
-          """
-              Long standby since the Package command.
-              If you would like to continue in package mode, press the Dismiss button.
-              Otherwise, the package mode terminates automatically in 1 minute.""")
-      .addField("Note",
-          """
-              The maximum number of messages retrieved by the Generate command is 100, including those that do not contain structure files.
-              The former messages will be ignored.""",
-          false)
+      .setDescription("""
+          Long standby since the Package command.
+          If you would like to continue in package mode, press the Dismiss button.
+          Otherwise, the package mode terminates automatically in 1 minute.""")
+      .addField("Note","""
+          The maximum number of messages retrieved by the Generate command is 100, including those that do not contain structure files.
+          The former messages will be ignored.""", false)
       .build();
   private static final MessageEmbed RESTART_EMBED = new EmbedBuilder(ALERT_EMBED_BUILDER)
-      .setDescription("The package mode will reset in a few seconds due to the restart of the bot.")
-      .addField("Note", """
-          If you wish to continue, please use "packagecontinue" command after a few minutes.
-          We apologize for the inconvenience.""", false)
+      .setDescription("""
+          The package mode will reset in a few seconds due to the restart of the bot.
+          If you wish to continue, please press the "Continue" button after a few seconds.""")
       .build();
   private static final ActionRow LONG_STANDBY_ACTION_ROW = ActionRow.of(
       OK_LONG_STANDBY.toButton(), DISMISS_LONG_STANDBY.toButton(), HELP.toButton());
-  private static final ActionRow RESTART_ACTION_ROW = ActionRow.of(OK.toButton(), HELP.toButton());
+  private static final ActionRow RESTART_ACTION_ROW = ActionRow.of(CONTINUE_RESTART.toButton(), HELP.toButton());
 
   // key is the ID of channel
   private final Map<Long, PackageModeChannel> packageModeChannels = new HashMap<>();
@@ -69,14 +61,11 @@ final class PackageManager {
 
   private final ScheduledExecutorService packageTerminationScheduler = SchedulerUtil.newScheduledDaemonThreadPool(1);
   
-  public void enablePackageMode(Message message, boolean isFirst) {
-    disablePackageMode(message.getChannel());
-    long channelID = message.getChannel().getIdLong();
-    packageModeChannels.put(channelID, new PackageModeChannel(message.getChannel()));
+  public void enablePackageMode(MessageChannel channel, boolean isFirst) {
+    disablePackageMode(channel);
+    long channelID = channel.getIdLong();
+    packageModeChannels.put(channelID, new PackageModeChannel(channel));
     scheduleLongStandbyAlert(channelID, (isFirst ? FIRST_PACKAGE_ALERT : SECOND_PACKAGE_ALERT).toMinutes());
-    if (!message.getAuthor().isBot()) {
-      message.addReaction(Emoji.fromUnicode("U+2705")).queue();
-    }
   }
 
   public void disablePackageMode(MessageChannel channel) {
@@ -87,6 +76,10 @@ final class PackageManager {
 
   public boolean isPackageMode(MessageChannel channel) {
     return packageModeChannels.containsKey(channel.getIdLong());
+  }
+
+  public PackageModeChannel getPackageModeChannel(MessageChannel channel) {
+    return packageModeChannels.get(channel.getIdLong());
   }
 
   public List<Message> getMessagesInPackage(Message message) {

@@ -8,6 +8,8 @@
 package io.github.risu729.erutcurts;
 
 import java.nio.file.Path;
+import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
 import javax.security.auth.login.LoginException;
 
 import net.dv8tion.jda.api.entities.Activity;
@@ -17,8 +19,9 @@ import org.apache.commons.io.FileUtils;
 
 public final class Erutcurts {
 
-  public static final String VERSION = "0.4.3";
+  public static final String VERSION = "0.4.4";
   public static final Path TEMP_DIR = Path.of(System.getProperty("java.io.tmpdir")).resolve(Path.of("Erutcurts"));
+  public static final OffsetDateTime LAST_RESTART = OffsetDateTime.now(ZoneOffset.UTC);
 
   public static void main(String[] args) throws LoginException, InterruptedException {
     var listener = new Listener();

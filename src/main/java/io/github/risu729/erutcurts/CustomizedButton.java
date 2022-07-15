@@ -8,6 +8,7 @@
 package io.github.risu729.erutcurts;
 
 import java.util.Arrays;
+import java.util.Objects;
 import java.util.Optional;
 
 import net.dv8tion.jda.api.interactions.components.buttons.Button;
@@ -15,14 +16,15 @@ import net.dv8tion.jda.api.interactions.components.buttons.ButtonStyle;
 
 enum CustomizedButton {
 
-  SINGLE(ButtonStyle.PRIMARY, "single", "Single"),
-  INDEX(ButtonStyle.PRIMARY, "index", "Index"),
-  DELETE(ButtonStyle.DANGER, "delete", "Delete"),
-  HELP(ButtonStyle.SECONDARY, "help", "Help"),
-  OK(ButtonStyle.SUCCESS, "ok", "OK"),
-  OK_LONG_STANDBY(ButtonStyle.SUCCESS, "ok_long_standby", "OK"),
-  DISMISS_LONG_STANDBY(ButtonStyle.DANGER, "dismiss_long_standby", "Dismiss"),
-  HELP_URL(ButtonStyle.LINK, "https://github.com/risu729/erutcurts/blob/main/README.md", "More");
+  SINGLE(ButtonStyle.PRIMARY, "Single"),
+  INDEX(ButtonStyle.PRIMARY, "Index"),
+  DELETE(ButtonStyle.DANGER, "Delete"),
+  HELP(ButtonStyle.SECONDARY, "Help"),
+  HELP_URL(ButtonStyle.LINK, "https://github.com/risu729/erutcurts/blob/main/README.md", "More"),
+  OK(ButtonStyle.SUCCESS, "OK"),
+  OK_LONG_STANDBY(ButtonStyle.SUCCESS, "OK"),
+  DISMISS_LONG_STANDBY(ButtonStyle.DANGER, "Dismiss"),
+  CONTINUE_RESTART(ButtonStyle.SUCCESS, "Continue");
 
   public static Optional<CustomizedButton> fromButton(Button button) {
     return fromID(button.getId());
@@ -34,13 +36,25 @@ enum CustomizedButton {
         .findFirst();
   }
 
-  private final Button button;
+  private final ButtonStyle style;
+  private final String idOrURL;
+  private final String label;
+
+  private CustomizedButton(ButtonStyle style, String label) {
+    this(style, null, label);
+  }
 
   private CustomizedButton(ButtonStyle style, String idOrURL, String label) {
-    button = Button.of(style, idOrURL, label);
+    this.style = style;
+    this.idOrURL = Objects.requireNonNullElseGet(idOrURL, this::toString);
+    this.label = label;
   }
 
   public Button toButton() {
-    return button;
+    return Button.of(style, idOrURL, label);
+  }
+
+  public Button toButtonDisabled() {
+    return toButton().asDisabled();
   }
 }
