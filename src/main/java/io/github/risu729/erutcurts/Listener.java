@@ -62,7 +62,6 @@ final class Listener extends ListenerAdapter {
     try {
       switch (command) {
         case DEBUG -> {
-          UtilCommands.replyError(message, new AssertionError("test"));
           UtilCommands.replyDebugInfo(message, packageManager.getPackageModeChannel(channel));
         }
 
@@ -137,6 +136,7 @@ final class Listener extends ListenerAdapter {
       }
     } catch (RuntimeException | Error e) {
       UtilCommands.replyError(message, e);
+      throw e;
     }
   }
 

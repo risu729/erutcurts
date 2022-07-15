@@ -14,6 +14,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.io.UncheckedIOException;
+import java.time.temporal.ChronoUnit;
 import java.util.Arrays;
 import java.util.EnumSet;
 import java.util.List;
@@ -49,8 +50,8 @@ final class UtilCommands {
         .setActionRows(HELP_ACTION_ROW)
         .mentionRepliedUser(false)
         .queue(m -> m.editMessageEmbeds(new EmbedBuilder(HELP_EMBED)
-                .setFooter(String.format("version: %s\nlast restart: %s\nping: %d ms",
-                    Erutcurts.LAST_RESTART.toString(), Erutcurts.VERSION, System.currentTimeMillis() - time))
+                .setFooter(String.format("version: %s\nlast restart: %s\nping: %d ms", Erutcurts.VERSION,
+                    Erutcurts.LAST_RESTART.truncatedTo(ChronoUnit.SECONDS).toString(), System.currentTimeMillis() - time))
                 .build())
             .queue());
   }

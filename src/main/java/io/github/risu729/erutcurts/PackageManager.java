@@ -48,11 +48,11 @@ final class PackageManager {
   private static final MessageEmbed RESTART_EMBED = new EmbedBuilder(ALERT_EMBED_BUILDER)
       .setDescription("""
           The package mode will reset in a few seconds due to the restart of the bot.
-          If you wish to continue, please press the "Continue" button after a few seconds.""")
+          If you wish to continue, please press the "Continue" button after a few minutes.""")
       .build();
   private static final ActionRow LONG_STANDBY_ACTION_ROW = ActionRow.of(
       OK_LONG_STANDBY.toButton(), DISMISS_LONG_STANDBY.toButton(), HELP.toButton());
-  private static final ActionRow RESTART_ACTION_ROW = ActionRow.of(CONTINUE_RESTART.toButton(), HELP.toButton());
+  private static final ActionRow RESTART_ACTION_ROW = ActionRow.of(CONTINUE_RESTART.toButton(), DELETE.toButton(), HELP.toButton());
 
   // key is the ID of channel
   private final Map<Long, PackageModeChannel> packageModeChannels = new HashMap<>();

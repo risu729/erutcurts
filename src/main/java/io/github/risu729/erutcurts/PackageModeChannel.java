@@ -81,7 +81,7 @@ final class PackageModeChannel {
     str.append(channel);
     str.append("\nlongStandbyAlert: ");
     str.append(longStandbyAlert);
-    str.append("\ncancelPackageTermination: ");
+    str.append("\npackageTermination: ");
     str.append(packageTermination);
     return str.toString();
   }
