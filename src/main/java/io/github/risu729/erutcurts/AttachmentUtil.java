@@ -28,7 +28,7 @@ import net.dv8tion.jda.api.utils.FileProxy;
 final class AttachmentUtil {
 
   private static final EmbedBuilder COUNT_EMBED_BUILDER = new EmbedBuilder()
-      .setColor(Color.WHITE);
+      .setColor(Color.CYAN);
 
   public static List<Path> download(Collection<Message.Attachment> attachments, Path directory) {
     if (!Files.isDirectory(directory)) {
@@ -87,14 +87,20 @@ final class AttachmentUtil {
     int messageAmount = separationIndex.size();
     List<Message> sentMessages = new ArrayList<>();
     for (int i = 0; i < messageAmount; i++) {
+      int fromIndex = i <= 0 ? 0 : separationIndex.get(i - 1);
+      int untilIndex = separationIndex.get(i);
+      String count = fromIndex == untilIndex ? String.format("%d of %d", fromIndex + 1, files.size())
+          : String.format("%d to %d of %d", fromIndex + 1, untilIndex, files.size());
       MessageAction messageAction = message.replyEmbeds(
-          new EmbedBuilder(COUNT_EMBED_BUILDER).setTitle((i + 1) + "/" + messageAmount).build())
+          new EmbedBuilder(COUNT_EMBED_BUILDER)
+              .setTitle(count)
+              .build())
           .mentionRepliedUser(false)
           .setActionRows(actionRow);
       if (messageAmount == 1) {
         messageAction.setEmbeds(Collections.emptyList());
       }
-      for (Path p : files.subList(i <= 0 ? 0 : separationIndex.get(i - 1), separationIndex.get(i))) {
+      for (Path p : files.subList(fromIndex, untilIndex)) {
         messageAction.addFile(p.toFile());
       }
       sentMessages.add(messageAction.complete());

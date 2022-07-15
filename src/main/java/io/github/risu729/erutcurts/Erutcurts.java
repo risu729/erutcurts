@@ -17,7 +17,7 @@ import org.apache.commons.io.FileUtils;
 
 public final class Erutcurts {
 
-  public static final String VERSION = "0.4.2";
+  public static final String VERSION = "0.4.3";
   public static final Path TEMP_DIR = Path.of(System.getProperty("java.io.tmpdir")).resolve(Path.of("Erutcurts"));
 
   public static void main(String[] args) throws LoginException, InterruptedException {
@@ -32,12 +32,6 @@ public final class Erutcurts {
       FileUtils.deleteQuietly(TEMP_DIR.toFile());
       listener.shutdown();
       jda.shutdown();
-      try {
-        // wait for 1 seconds to queue messages successfully
-        Thread.sleep(1000);
-      } catch (InterruptedException e) {
-        throw new AssertionError(e);
-      }
     }, "Shutdown Hook"));
   }
 }

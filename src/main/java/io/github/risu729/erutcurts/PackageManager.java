@@ -15,6 +15,9 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
+
+import ch.qos.logback.classic.LoggerContext;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -60,33 +63,25 @@ final class PackageManager {
   private static final ActionRow RESTART_ACTION_ROW = ActionRow.of(OK.toButton(), HELP.toButton());
 
   // key is the ID of channel
-  private final Map<Long, MessageChannel> packageModeChannels = new HashMap<>();
+  private final Map<Long, PackageModeChannel> packageModeChannels = new HashMap<>();
 
   private final ScheduledExecutorService longStandbyAlertScheduler = SchedulerUtil.newScheduledDaemonThreadPool(5);
 
-  private final ScheduledExecutorService packageTerminateScheduler = SchedulerUtil.newScheduledDaemonThreadPool(1);
-  // key is the ID of channel
-  private final Map<Long, ScheduledFuture<?>> packageTerminateSchedules = new HashMap<>();
+  private final ScheduledExecutorService packageTerminationScheduler = SchedulerUtil.newScheduledDaemonThreadPool(1);
   
   public void enablePackageMode(Message message, boolean isFirst) {
-    MessageChannel channel = message.getChannel();
-    packageModeChannels.put(channel.getIdLong(), channel);
-    long delay = (isFirst ? FIRST_PACKAGE_ALERT : SECOND_PACKAGE_ALERT).toMinutes();
-    longStandbyAlertScheduler.schedule(() -> sendLongStandbyAlert(channel), delay, TimeUnit.MINUTES);
+    disablePackageMode(message.getChannel());
+    long channelID = message.getChannel().getIdLong();
+    packageModeChannels.put(channelID, new PackageModeChannel(message.getChannel()));
+    scheduleLongStandbyAlert(channelID, (isFirst ? FIRST_PACKAGE_ALERT : SECOND_PACKAGE_ALERT).toMinutes());
     if (!message.getAuthor().isBot()) {
       message.addReaction(Emoji.fromUnicode("U+2705")).queue();
     }
   }
 
   public void disablePackageMode(MessageChannel channel) {
-    packageModeChannels.remove(channel.getIdLong());
-  }
-
-  public void cancelTermination(MessageChannel channel) {
-    long channelID = channel.getIdLong();
-    if (packageTerminateSchedules.containsKey(channelID)) {
-      packageTerminateSchedules.get(channelID).cancel(true);
-      packageTerminateSchedules.remove(channelID);
+    if (packageModeChannels.containsKey(channel.getIdLong())) {
+      packageModeChannels.remove(channel.getIdLong()).cancelAll();
     }
   }
 
@@ -95,6 +90,7 @@ final class PackageManager {
   }
 
   public List<Message> getMessagesInPackage(Message message) {
+    disablePackageMode(message.getChannel());
     List<Message> history;
     try {
       history = message.getChannel().getHistoryBefore(message, HISTORY_LIMIT)
@@ -113,28 +109,31 @@ final class PackageManager {
     return history.subList(0, packageIndex == -1 ? history.size() : packageIndex + 1);
   }
 
-  public void sendLongStandbyAlert(MessageChannel channel) {
-    channel.sendMessageEmbeds(LONG_STANDBY_EMBED)
-        .setActionRows(LONG_STANDBY_ACTION_ROW)
-        .mentionRepliedUser(false)
-        .queue();
-    ScheduledFuture<?> schedule = packageTerminateScheduler.schedule(() -> {
-      disablePackageMode(channel);
-      packageTerminateSchedules.remove(channel.getIdLong());
-    }, WAIT_PACKAGE_TERMINATION.toMinutes(), TimeUnit.MINUTES);
-    packageTerminateSchedules.put(channel.getIdLong(), schedule);
+  private void scheduleLongStandbyAlert(long channelID, long delayInMinute) {
+    PackageModeChannel packageModeChannel = packageModeChannels.get(channelID);
+    packageModeChannel.setLongStandbyAlert(longStandbyAlertScheduler.schedule(() -> {
+      packageModeChannel.getChannel()
+          .sendMessageEmbeds(LONG_STANDBY_EMBED)
+          .setActionRows(LONG_STANDBY_ACTION_ROW)
+          .mentionRepliedUser(false)
+          .queue();
+      packageModeChannel.setPackageTermination(packageTerminationScheduler.schedule(
+          () -> disablePackageMode(packageModeChannel.getChannel()), WAIT_PACKAGE_TERMINATION.toMinutes(), TimeUnit.MINUTES));
+    }, delayInMinute, TimeUnit.MINUTES));
   }
 
-  public static void sendRestartAlert(MessageChannel channel) {
+  private static void sendRestartAlert(MessageChannel channel) {
     channel.sendMessageEmbeds(RESTART_EMBED)
         .setActionRows(RESTART_ACTION_ROW)
         .mentionRepliedUser(false)
-        .queue();
+        .complete();
   }
 
   public void shutdown() {
     longStandbyAlertScheduler.shutdownNow();
-    packageTerminateScheduler.shutdownNow();
-    packageModeChannels.values().forEach(PackageManager::sendRestartAlert);
+    packageTerminationScheduler.shutdownNow();
+    packageModeChannels.values().stream()
+        .map(PackageModeChannel::getChannel)
+        .forEach(PackageManager::sendRestartAlert);
   }
 }

@@ -150,13 +150,11 @@ final class Listener extends ListenerAdapter {
       case OK, DELETE -> UtilCommands.deleteMessage(message);
 
       case OK_LONG_STANDBY -> {
-        packageManager.cancelTermination(channel);
         packageManager.disablePackageMode(channel);
         UtilCommands.deleteMessage(message);
       }
 
       case DISMISS_LONG_STANDBY -> {
-        packageManager.cancelTermination(channel);
         packageManager.enablePackageMode(message, false);
         UtilCommands.deleteMessage(message);
       }
