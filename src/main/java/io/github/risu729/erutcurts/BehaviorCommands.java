@@ -25,8 +25,8 @@ import io.github.risu729.erutcurts.structure.StructureAddon;
 
 final class BehaviorCommands {
 
-  private static final ActionRow MULTI_ACTION_ROW = ActionRow.of(SINGLE.toButton(), INDEX.toButton(), DELETE.toButton(),
-      HELP.toButton());
+  private static final ActionRow MULTI_ACTION_ROW = ActionRow.of(
+      SINGLE.toButton(), INDEX.toButton(), DELETE.toButton(), HELP.toButton());
   private static final ActionRow SINGLE_ACTION_ROW = ActionRow.of(INDEX.toButton(), DELETE.toButton(), HELP.toButton());
 
   public static Message replyMulti(Message message, Collection<Path> structures) {
@@ -38,7 +38,8 @@ final class BehaviorCommands {
     } catch (IOException e) {
       throw new UncheckedIOException(e);
     }
-    var result = AttachmentUtil.replySingleFile(message, packPath, MULTI_ACTION_ROW);
+    var result = AttachmentUtil.replySingleFile(
+        message, packPath, structures.size() == 1 ? SINGLE_ACTION_ROW : MULTI_ACTION_ROW);
     FileUtils.deleteQuietly(tempDir.toFile());
     return result;
   }

@@ -75,10 +75,9 @@ final class AttachmentUtil {
         separationIndex.add(index);
         fileCount = 0;
         totalFileSize = 0L;
-      } else {
-        fileCount++;
-        totalFileSize += fileSize;
       }
+      fileCount++;
+      totalFileSize += fileSize;
       if (index >= fileAmount - 1) { // finally
         separationIndex.add(fileAmount);
       }
@@ -89,12 +88,10 @@ final class AttachmentUtil {
     for (int i = 0; i < messageAmount; i++) {
       int fromIndex = i <= 0 ? 0 : separationIndex.get(i - 1);
       int untilIndex = separationIndex.get(i);
-      String count = fromIndex == untilIndex ? String.format("%d of %d", fromIndex + 1, files.size())
-          : String.format("%d to %d of %d", fromIndex + 1, untilIndex, files.size());
+      String count = fromIndex + 1 == untilIndex ? String.format("%d / %d", fromIndex + 1, files.size())
+          : String.format("%d ~ %d / %d", fromIndex + 1, untilIndex, files.size());
       MessageAction messageAction = message.replyEmbeds(
-          new EmbedBuilder(COUNT_EMBED_BUILDER)
-              .setTitle(count)
-              .build())
+              new EmbedBuilder(COUNT_EMBED_BUILDER).setTitle(count).build())
           .mentionRepliedUser(false)
           .setActionRows(actionRow);
       if (messageAmount == 1) {

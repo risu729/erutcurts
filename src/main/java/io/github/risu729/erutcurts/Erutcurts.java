@@ -19,7 +19,7 @@ import org.apache.commons.io.FileUtils;
 
 public final class Erutcurts {
 
-  public static final String VERSION = "0.4.5";
+  public static final String VERSION = "0.4.6";
   public static final Path TEMP_DIR = Path.of(System.getProperty("java.io.tmpdir")).resolve(Path.of("Erutcurts"));
   public static final OffsetDateTime LAST_RESTART = OffsetDateTime.now(ZoneOffset.UTC);
 
