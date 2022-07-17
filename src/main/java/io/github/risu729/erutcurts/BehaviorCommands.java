@@ -74,7 +74,9 @@ final class BehaviorCommands {
     Path tempDir = FileUtil.createTempDir();
     List<Path> packPath = new LinkedList<>();
     for (var p : structures) {
+      UtilCommands.replyDebugInfo(message, p);
       try (var addon = StructureAddon.of(p)) {
+        UtilCommands.replyDebugInfo(message, addon);
         packPath.add(addon.generateBehavior(tempDir));
       } catch (IOException e) {
         throw new UncheckedIOException(e);
