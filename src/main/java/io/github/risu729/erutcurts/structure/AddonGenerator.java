@@ -7,50 +7,43 @@
 
 package io.github.risu729.erutcurts.structure;
 
+import static io.github.risu729.erutcurts.structure.AddonDirectoryConfig.*;
+
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
 import net.lingala.zip4j.ZipFile;
-import org.apache.commons.io.FileUtils;
+
+import io.github.risu729.erutcurts.util.FileUtil;
 
 final class AddonGenerator {
 
-  // behavior packs
-  private static MCExtension BEHAVIOR_EXTENSION = MCExtension.MCPACK;
-  private static final Path MANIFEST_PATH = Path.of("manifest.json");
-  private static final Path PACK_ICON_PATH = Path.of("pack_icon.png");
-  private static final Path STRUCTURES_DIR = Path.of("structures");
-
-  // world
-
   public static Path generateBehavior(StructureAddon structureAddon, Path target) throws IOException {
-    Path tempDir = Files.createTempDirectory(Files.createDirectories(structureAddon.getTempDir()), "AddonGenerator");
+    Path tempDir = FileUtil.createTempDir();
     Path packDir = generateBehaviorDirectory(structureAddon, tempDir);
-    Path result =  zip(packDir, target, BEHAVIOR_EXTENSION);
-    FileUtils.deleteQuietly(tempDir.toFile());
+    Path result =  zip(packDir, target, MCExtension.MCPACK);
+    FileUtil.delete(tempDir);
     return result;
   }
 
-  /*
-  static Path generateWorld(StructureAddon structureAddon, Path target) throws IOException {
-  }
-  */
-
   private static Path generateBehaviorDirectory(StructureAddon structureAddon, Path tempDir) throws IOException {
     final Path behaviorDir = Files.createDirectory(tempDir.resolve(structureAddon.getPackName()));
-    final Path structuresDir = Files.createDirectory(behaviorDir.resolve(STRUCTURES_DIR));
+    final Path structuresDir = Files.createDirectory(behaviorDir.resolve(Behavior.STRUCTURES_DIR));
     
-    Files.writeString(behaviorDir.resolve(MANIFEST_PATH), structureAddon.getManifest().toJson());
-    Files.copy(structureAddon.getPackIcon(), behaviorDir.resolve(PACK_ICON_PATH));
+    Files.writeString(behaviorDir.resolve(Pack.MANIFEST_FILE), structureAddon.getManifest().toJson());
+    Files.copy(structureAddon.getPackIcon(), behaviorDir.resolve(Pack.PACK_ICON_FILE));
     for (Path p : structureAddon.getStructures()) {
-      Files.copy(p, structuresDir.resolve(p.getFileName()));
+      FileUtil.copyToDir(p, structuresDir);
     }
 
     return behaviorDir;
   }
 
   /*
+  public static Path generateWorld(StructureAddon structureAddon, Path target) throws IOException {
+  }
+
   private static Path generateWorldDirectory(StructureAddon structureAddon, Path tempDir) throws IOException {
     // TODO: generate level.dat, world_icon, behavior, function
   }
@@ -71,6 +64,7 @@ final class AddonGenerator {
     try (var zipFile = new ZipFile(zipFilePath.toFile())) {
       zipFile.addFolder(dirToZip.toFile());
     }
+    
     return zipFilePath;
   }
 

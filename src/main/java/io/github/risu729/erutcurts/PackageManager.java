@@ -25,6 +25,8 @@ import net.dv8tion.jda.api.entities.MessageChannel;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.interactions.components.ActionRow;
 
+import io.github.risu729.erutcurts.util.SchedulerUtil;
+
 final class PackageManager {
 
   private static final Duration FIRST_PACKAGE_ALERT = Duration.ofMinutes(1);//ofHours(3); debug

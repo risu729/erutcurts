@@ -19,18 +19,15 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.TreeMap;
 
-import org.apache.commons.io.FilenameUtils;
-
 import io.github.risu729.erutcurts.Erutcurts;
+import io.github.risu729.erutcurts.util.FileUtil;
 import io.github.risu729.mcbe.manifest4j.Header;
 import io.github.risu729.mcbe.manifest4j.Manifest;
 import io.github.risu729.mcbe.manifest4j.Metadata;
 import io.github.risu729.mcbe.manifest4j.Module_;
 import io.github.risu729.mcbe.manifest4j.SemVer;
 
-public final class StructureAddon {
-
-  public static final Set<String> STRUCTURE_EXTENSIONS = Set.of(MCExtension.MCSTRUCTURE.toString());
+public final class StructureAddon implements AutoCloseable {
 
   private static final Metadata.GeneratedWith ERUTCURTS_GENERATED_WITH = new Metadata.GeneratedWith.Builder()
       .name("Erutcurts")
@@ -55,6 +52,10 @@ public final class StructureAddon {
 
   public static StructureAddon of(Collection<Path> structures) {
     return new Builder().structures(structures).build();
+  }
+
+  public static StructureAddon fromBehavior(Path pack) throws IOException {
+    return AddonExtractor.extractBehavior(pack);
   }
 
   public Path generateBehavior(Path target) throws IOException {
@@ -101,30 +102,20 @@ public final class StructureAddon {
     private Manifest manifest;
     private Path packIcon;
     private TreeMap<String, Path> structures; // necessarry at least 1
-    private Path tempDir;
 
     public Builder() {
     }
 
-    public Builder(Path tempDir) {
-      this.tempDir = tempDir;
-    }
-
     public Builder(StructureAddon other) {
-      this(other, other.tempDir);
-    }
-
-    public Builder(StructureAddon other, Path tempDir) {
       packName(other.packName);
       manifest(other.manifest);
       packIcon(other.packIcon);
       structures(other.structures.values());
-      this.tempDir = tempDir;
     }
 
     public Builder packName(String packName) {
       if (packName != null && !DIRECTORY_NAME_REGEX.matcher(packName).matches()) {
-        throw new IllegalArgumentException("invalid directory name : " + packName);
+        throw new IllegalArgumentException("invalid directory name: " + packName);
       }
       this.packName = packName;
       return this;
@@ -134,7 +125,7 @@ public final class StructureAddon {
       if (manifest.getModules()
           .stream()
           .noneMatch(m -> m.getType() == Module_.Type.DATA)) {
-        throw new IllegalArgumentException("types of modules in manifest must contain data : " + manifest);
+        throw new IllegalArgumentException("types of modules in manifest must contain data: " + manifest);
       }
       this.manifest = manifest;
       return this;
@@ -159,7 +150,7 @@ public final class StructureAddon {
         return this;
       }
       packIcon = packIcon.normalize();
-      if (!FilenameUtils.isExtension(packIcon.toString(), PACK_ICON_EXTENSIONS)) {
+      if (!FileUtil.isExtension(packIcon, PACK_ICON_EXTENSIONS)) {
         throw new IllegalArgumentException("extension of pack_icon must be one of "
             + PACK_ICON_EXTENSIONS.toString() + ": " + packIcon);
       }
@@ -190,13 +181,13 @@ public final class StructureAddon {
       for (var p : structures) {
         Objects.requireNonNull(p, "path of structure must not be null");
         p = p.normalize();
-        if (!FilenameUtils.isExtension(p.toString(), STRUCTURE_EXTENSIONS)) {
-          throw new IllegalArgumentException("extension of a structure must be one of "
-              + STRUCTURE_EXTENSIONS.toString() + " : " + p);
+        if (!FileUtil.isExtension(p, MCExtension.MCSTRUCTURE.toString())) {
+          throw new IllegalArgumentException("extension of a structure must be "
+              + MCExtension.MCSTRUCTURE.toString() + ": " + p);
         }
-        String name = FilenameUtils.getBaseName(p.normalize().getFileName().toString());
+        String name = p.getFileName().toString().replaceAll(MCExtension.MCSTRUCTURE.toString() + "$", "");
         if (this.structures.containsKey(name)) {
-          throw new IllegalStateException("duplicate structures : " + name);
+          throw new IllegalStateException("duplicated structures: " + name);
         }
         this.structures.put(name, p);
       }
@@ -210,10 +201,14 @@ public final class StructureAddon {
 
   @SuppressWarnings("unchecked")
   private StructureAddon(Builder builder) {
+    this.tempDir = FileUtil.createTempDir();
+
     this.structures = (TreeMap<String, Path>) Objects.requireNonNull(builder.structures).clone();
+    this.structures.entrySet().forEach(e -> e.setValue(FileUtil.copyToDir(e.getValue(), tempDir)));
 
     String packNameTemp = builder.packName != null ? builder.packName
         : builder.manifest != null ? builder.manifest.getHeader().getName() : builder.structures.firstKey();
+    // if packNameTemp is invalid for directory name, use randomly generated one
     if (DIRECTORY_NAME_REGEX.matcher(packNameTemp).matches()) {
       this.packName = packNameTemp;
     } else {
@@ -239,7 +234,7 @@ public final class StructureAddon {
       this.manifest = new Manifest.Builder()
           .header(new Header.Builder()
               .name(name)
-              .description(String.join(", ", builder.structures.keySet()) + "\nby Erutcurts")
+              .description("§lIncluded Structures§r\n" + String.join(", ", builder.structures.keySet()) + "\n\nby Erutcurts")
               .build())
           .modules(Module_.of(Module_.Type.DATA))
           .metadata(new Metadata.Builder()
@@ -248,8 +243,16 @@ public final class StructureAddon {
           .build();
     }
 
-    this.packIcon = Objects.requireNonNullElse(builder.packIcon, DEFAULT_PACK_ICON);
-    this.tempDir = Objects.requireNonNullElse(builder.tempDir, Erutcurts.TEMP_DIR);
+    if (builder.packIcon == null) {
+      this.packIcon = DEFAULT_PACK_ICON;
+    } else {
+      this.packIcon = FileUtil.copyToDir(builder.packIcon, tempDir);
+    }
+  }
+
+  @Override
+  public void close() {
+    FileUtil.delete(tempDir);
   }
 
   @Override

@@ -11,17 +11,17 @@ import static io.github.risu729.erutcurts.CustomizedButton.*;
 
 import java.io.IOException;
 import java.io.UncheckedIOException;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.interactions.components.ActionRow;
-import org.apache.commons.io.FileUtils;
 
 import io.github.risu729.erutcurts.structure.StructureAddon;
+import io.github.risu729.erutcurts.util.FileUtil;
 
 final class BehaviorCommands {
 
@@ -30,36 +30,50 @@ final class BehaviorCommands {
   private static final ActionRow SINGLE_ACTION_ROW = ActionRow.of(INDEX.toButton(), DELETE.toButton(), HELP.toButton());
 
   public static Message replyMulti(Message message, Collection<Path> structures) {
-    Path tempDir;
+    Path tempDir = FileUtil.createTempDir();
     Path packPath;
-    try {
-      tempDir = Files.createTempDirectory(Erutcurts.TEMP_DIR, "BehaviorCommands");
-      packPath = StructureAddon.of(structures).generateBehavior(tempDir);
+    try (var addon = StructureAddon.of(structures)) {
+      packPath = addon.generateBehavior(tempDir);
     } catch (IOException e) {
       throw new UncheckedIOException(e);
     }
     var result = AttachmentUtil.replySingleFile(
         message, packPath, structures.size() == 1 ? SINGLE_ACTION_ROW : MULTI_ACTION_ROW);
-    FileUtils.deleteQuietly(tempDir.toFile());
+    FileUtil.delete(tempDir);
     return result;
+  }
+
+  public static List<Message> replySingleFromBehaviors(Message message, Collection<Path> packs) {
+    if (packs.isEmpty()) {
+      throw new IllegalArgumentException("packs collection is empty: " + packs);
+    }
+    return packs.stream()
+        .map(p -> {
+          try (var addon = StructureAddon.fromBehavior(p)) {
+            return addon.getStructures();
+          } catch (IOException e) {
+            throw new UncheckedIOException(e);
+          }
+        })
+        .flatMap(Collection::stream)
+        .collect(Collectors.collectingAndThen(Collectors.toList(), l -> replySingle(message, l)));
   }
 
   public static List<Message> replySingle(Message message, Collection<Path> structures) {
     if (structures.isEmpty()) {
-      throw new IllegalArgumentException("structures are empty: " + structures);
+      throw new IllegalArgumentException("structures collection is empty: " + structures);
     }
-    Path tempDir;
+    Path tempDir = FileUtil.createTempDir();
     List<Path> packPath = new ArrayList<>();
-    try {
-      tempDir = Files.createTempDirectory(Erutcurts.TEMP_DIR, "BehaviorCommands");
-      for (var p : structures) {
-        packPath.add(StructureAddon.of(p).generateBehavior(tempDir));
+    for (var p : structures) {
+      try (var addon = StructureAddon.of(p)) {
+        packPath.add(addon.generateBehavior(tempDir));
+      } catch (IOException e) {
+        throw new UncheckedIOException(e);
       }
-    } catch (IOException e) {
-      throw new UncheckedIOException(e);
     }
     var result = AttachmentUtil.replyFiles(message, packPath, SINGLE_ACTION_ROW);
-    FileUtils.deleteQuietly(tempDir.toFile());
+    FileUtil.delete(tempDir);
     return result;
   }
 }

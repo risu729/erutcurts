@@ -1,0 +1,22 @@
+{
+  "format_version": 2,
+  "header": {
+    "name": "Structures test and 11 others",
+    "description": "test, test_copy, test_copy_10, test_copy_11, test_copy_2, test_copy_3, test_copy_4, test_copy_5, test_copy_6, test_copy_7, test_copy_8, test_copy_9\nby Erutcurts",
+    "uuid": "26d13c97-8bd0-47ed-8839-d5a6c2d84a93",
+    "version": [1,0,0],
+    "min_engine_version": [1,13,0]
+  },
+  "modules": [
+    {
+      "type": "data",
+      "uuid": "101f5a2c-36cb-47e6-8ede-e5c1a5f961f9",
+      "version": [1,0,0]
+    }
+  ],
+  "metadata": {
+    "generated_with": {
+      "Erutcurts": ["0.4.6"]
+    }
+  }
+}

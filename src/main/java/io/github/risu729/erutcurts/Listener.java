@@ -7,9 +7,6 @@
 
 package io.github.risu729.erutcurts;
 
-import java.io.IOException;
-import java.io.UncheckedIOException;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.Duration;
 import java.util.Comparator;
@@ -19,6 +16,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import java.util.TreeSet;
 
 import net.dv8tion.jda.api.entities.Message;
@@ -27,9 +25,11 @@ import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.utils.TimeUtil;
-import org.apache.commons.io.FileUtils;
 
-import io.github.risu729.erutcurts.structure.StructureAddon;
+import io.github.risu729.erutcurts.structure.MCExtension;
+import io.github.risu729.erutcurts.util.FileUtil;
+import io.github.risu729.erutcurts.util.SchedulerUtil;
+
 
 final class Listener extends ListenerAdapter {
 
@@ -91,13 +91,15 @@ final class Listener extends ListenerAdapter {
             targetMessages.addAll(packageManager.getMessagesInPackage(message));
           }
 
-          List<Message.Attachment> attachments = targetMessages.stream()
+         Path cacheDir;
+          cacheDir = FileUtil.createTempDir();
+          List<Path> structures = targetMessages.stream()
               .filter(m -> !m.getAuthor().isBot())
               .map(Message::getAttachments)
               .flatMap(List::stream)
-              .filter(e -> StructureAddon.STRUCTURE_EXTENSIONS.contains(e.getFileExtension()))
-              .toList();
-          if (attachments.isEmpty()) {
+              .filter(e -> MCExtension.MCSTRUCTURE.toString().equalsIgnoreCase(e.getFileExtension()))
+              .collect(Collectors.collectingAndThen(Collectors.toList(), l -> AttachmentUtil.download(l, cacheDir)));
+          if (structures.isEmpty()) {
             if (command == Command.GENERATE) {
               throw new IllegalArgumentException("No structure files are found");
             }
@@ -113,23 +115,16 @@ final class Listener extends ListenerAdapter {
                 .filter(m -> !m.getAuthor().isBot())
                 .filter(m -> m.getAttachments().stream()
                     .map(Message.Attachment::getFileExtension)
-                    .anyMatch(StructureAddon.STRUCTURE_EXTENSIONS::contains))
+                    .anyMatch(MCExtension.MCSTRUCTURE.toString()::equalsIgnoreCase))
                 .findFirst()
                 .orElseThrow(AssertionError::new);
           }
 
-          Path cacheDir;
-          try {
-            cacheDir = Files.createTempDirectory(Files.createDirectories(Erutcurts.TEMP_DIR), "Listener");
-          } catch (IOException e) {
-            throw new UncheckedIOException(e);
-          }
-          List<Path> structures = AttachmentUtil.download(attachments, cacheDir);
           Message sentMessage = BehaviorCommands.replyMulti(reference, structures);
           structureCaches.put(sentMessage.getIdLong(), structures);
           cacheDeleteScheduler.schedule(() -> {
             structureCaches.remove(sentMessage.getIdLong());
-            FileUtils.deleteQuietly(cacheDir.toFile());
+            FileUtil.delete(cacheDir);
           }, WAIT_CACHE_DELETION.toMinutes(), TimeUnit.MINUTES);
         }
         default -> throw new UnsupportedOperationException("Unsuppported Command: " + command);
@@ -156,7 +151,17 @@ final class Listener extends ListenerAdapter {
         case HELP -> UtilCommands.replyHelp(message);
 
         case SINGLE -> {
-          BehaviorCommands.replySingle(message, structureCaches.get(message.getIdLong()));
+          if (structureCaches.containsKey(message.getIdLong())) {
+            BehaviorCommands.replySingle(message, structureCaches.get(message.getIdLong()));
+            return;
+          }
+          Path cacheDir = FileUtil.createTempDir();
+          List<Path> packs = message.getAttachments()
+              .stream()
+              .filter(e -> MCExtension.MCPACK.toString().equalsIgnoreCase(e.getFileExtension()))
+              .collect(Collectors.collectingAndThen(Collectors.toList(), l -> AttachmentUtil.download(l, cacheDir)));
+          BehaviorCommands.replySingleFromBehaviors(message, packs);
+          FileUtil.delete(cacheDir);
         }
 
         // TODO: support INDEX button

@@ -5,7 +5,7 @@
 
   <groupId>io.github.risu729</groupId>
   <artifactId>erutcurts</artifactId>
-  <version>0.4.6</version>
+  <version>0.5.0</version>
 
   <name>${project.artifactId}</name>
   <url>https://github.com/risu729/${project.artifactId}</url>
@@ -25,11 +25,6 @@
   </licenses>
 
   <dependencies>
-    <dependency>
-      <groupId>commons-io</groupId>
-      <artifactId>commons-io</artifactId>
-      <version>2.11.0</version>
-    </dependency>
     <dependency>
       <groupId>com.google.code.gson</groupId>
       <artifactId>gson</artifactId>
