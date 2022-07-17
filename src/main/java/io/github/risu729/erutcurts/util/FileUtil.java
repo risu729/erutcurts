@@ -57,14 +57,11 @@ public final class FileUtil {
   }
 
   public static boolean isExtension(Path path, Collection<String> extensions) {
-    try (var fileSystem = FileSystems.getDefault()) {
-      return extensions.stream()
-          .map(s -> "glob:*." + s)
-          .map(fileSystem::getPathMatcher)
-          .anyMatch(m -> m.matches(path));
-    } catch (IOException e) {
-      throw new UncheckedIOException(e);
-    }
+    var fileSystem = FileSystems.getDefault();
+    return extensions.stream()
+        .map(s -> "glob:*." + s)
+        .map(fileSystem::getPathMatcher)
+        .anyMatch(m -> m.matches(path));
   }
 
   private FileUtil() {
