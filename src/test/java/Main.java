@@ -5,10 +5,10 @@ import java.util.stream.*;
 
 import net.lingala.zip4j.ZipFile;
 
+import io.github.risu729.erutcurts.util.*;
+
 public final class Main {
   public static void main(String[] args) throws Exception {
-    Path resources = Path.of("src", "test", "resources");
-    new ZipFile(resources.resolve("test.mcpack").toFile()).extractAll(resources.toString());
-    Files.list(resources).forEach(System.out::println);
+    System.out.println(FileUtil.isExtension(Path.of("src.txt"), Set.of("txt")));
   }
 }

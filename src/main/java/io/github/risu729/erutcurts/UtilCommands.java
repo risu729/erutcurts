@@ -83,7 +83,7 @@ final class UtilCommands {
 
   public static void replyStackTrace(Message message) {
     List<Message.Attachment> attachments = message.getAttachments();
-    if (attachments.size() != 1 || attachments.get(0).getFileName().equals(STACK_TRACE_FILE_NAME)) {
+    if (attachments.size() != 1 || !attachments.get(0).getFileName().equals(STACK_TRACE_FILE_NAME)) {
       throw new IllegalArgumentException("message has several attachments or doesn't have a stacktrace attachment: " + message);
     }
     Path tempDir = FileUtil.createTempDir();

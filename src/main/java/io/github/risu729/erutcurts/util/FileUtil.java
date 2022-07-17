@@ -30,7 +30,7 @@ public final class FileUtil {
   }
 
   public static Path copyToDir(Path source, Path targetDir) {
-    if (Files.isDirectory(targetDir)) {
+    if (!Files.isDirectory(targetDir)) {
       throw new IllegalArgumentException("targetDir is not a directory: " + targetDir);
     }
     try {
