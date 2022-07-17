@@ -22,10 +22,12 @@ final class AddonExtractor {
 
   public static StructureAddon extractBehavior(Path pack) throws IOException {
     Path tempDir = FileUtil.createTempDir();
+    System.out.println(tempDir);
     try (var zipFile = new ZipFile(pack.toFile())) {
       zipFile.extractAll(tempDir.toString());
     }
     Path packDir = Files.find(tempDir, Integer.MAX_VALUE, (p, attr) -> Files.isDirectory(p)).findFirst().orElseThrow();
+    System.out.println(packDir);
     
     var builder = new StructureAddon.Builder();
     builder.packName(packDir.getFileName().toString());
