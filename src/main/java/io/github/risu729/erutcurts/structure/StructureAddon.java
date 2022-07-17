@@ -86,7 +86,7 @@ public final class StructureAddon implements AutoCloseable {
   }
 
   @SuppressWarnings("unchecked")
-  public Set<String> getStructuresNames() {
+  public Set<String> getStructureNames() {
     return ((TreeMap<String, Path>) structures.clone()).keySet();
   }
 

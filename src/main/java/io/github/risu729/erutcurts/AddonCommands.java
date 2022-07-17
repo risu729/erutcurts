@@ -25,14 +25,14 @@ import io.github.risu729.erutcurts.structure.StructureAddon;
 final class AddonCommands {
 
   private static final EmbedBuilder INDEX_EMBED_BUILDER = new EmbedBuilder()
-      .setTitle(Index)
+      .setTitle("Index")
       .setColor(Color.CYAN);
   private static final ActionRow INDEX_ACTION_ROW = ActionRow.of(DELETE.toButton(), HELP.toButton());
 
   public static void replyIndex(Message message, Collection<Path> packs) {
     var builder = new EmbedBuilder(INDEX_EMBED_BUILDER);
     for (var p : packs) {
-      try (var addon = StructureAddon.fromBehavior()) {
+      try (var addon = StructureAddon.fromBehavior(p)) {
         builder.addField(addon.getPackName(), addon.getStructureNames().stream().collect(Collectors.joining("\n")), false);
       } catch (IOException e) {
         throw new UncheckedIOException(e);
