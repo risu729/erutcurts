@@ -42,7 +42,13 @@ public final class FileUtil {
 
   public static void delete(Path path) {
     try (Stream<Path> stream = Files.walk(path)) {
-      stream.sorted(Comparator.reverseOrder()).forEach(Files::deleteIfExists);
+      stream.sorted(Comparator.reverseOrder()).forEach(p -> {
+        try {
+          Files.deleteIfExists(p);
+        } catch (IOException e) {
+          throw new UncheckedIOException(e);
+        }
+      });
     } catch (IOException e) {
       throw new UncheckedIOException(e);
     }
