@@ -29,8 +29,8 @@ import io.github.risu729.erutcurts.util.SchedulerUtil;
 
 final class PackageManager {
 
-  private static final Duration FIRST_PACKAGE_ALERT = Duration.ofMinutes(1);//ofHours(3); debug
-  private static final Duration SECOND_PACKAGE_ALERT = Duration.ofMinutes(2);//ofDays(1); debug
+  private static final Duration FIRST_PACKAGE_ALERT = Duration.ofHours(3);
+  private static final Duration SECOND_PACKAGE_ALERT = Duration.ofDays(1);
   private static final Duration WAIT_PACKAGE_TERMINATION = Duration.ofMinutes(1);
 
   private static final int HISTORY_LIMIT = 100;

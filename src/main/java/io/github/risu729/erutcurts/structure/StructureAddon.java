@@ -185,7 +185,7 @@ public final class StructureAddon implements AutoCloseable {
           throw new IllegalArgumentException("extension of a structure must be "
               + MCExtension.MCSTRUCTURE.toString() + ": " + p);
         }
-        String name = p.getFileName().toString().replaceAll(MCExtension.MCSTRUCTURE.toString() + "$", "");
+        String name = p.getFileName().toString().replaceAll("\\." + MCExtension.MCSTRUCTURE.toString() + "$", "");
         if (this.structures.containsKey(name)) {
           throw new IllegalStateException("duplicated structures: " + name);
         }

@@ -33,7 +33,7 @@ import io.github.risu729.erutcurts.util.SchedulerUtil;
 
 final class Listener extends ListenerAdapter {
 
-  private static final Duration WAIT_CACHE_DELETION = Duration.ofMinutes(1);// ofHours(1); debug
+  private static final Duration WAIT_CACHE_DELETION = Duration.ofHours(1);
 
   private final PackageManager packageManager = new PackageManager();
 
@@ -93,12 +93,7 @@ final class Listener extends ListenerAdapter {
 
          Path cacheDir;
           cacheDir = FileUtil.createTempDir();
-          List<Path> structures = targetMessages.stream()
-              .filter(m -> !m.getAuthor().isBot())
-              .map(Message::getAttachments)
-              .flatMap(List::stream)
-              .filter(e -> MCExtension.MCSTRUCTURE.toString().equalsIgnoreCase(e.getFileExtension()))
-              .collect(Collectors.collectingAndThen(Collectors.toList(), l -> AttachmentUtil.download(l, cacheDir)));
+          List<Path> structures = AttachmentUtil.download(targetMessages, cacheDir, MCExtension.MCSTRUCTURE.toString());
           if (structures.isEmpty()) {
             if (command == Command.GENERATE) {
               throw new IllegalArgumentException("No structure files are found");
@@ -117,7 +112,7 @@ final class Listener extends ListenerAdapter {
                     .map(Message.Attachment::getFileExtension)
                     .anyMatch(MCExtension.MCSTRUCTURE.toString()::equalsIgnoreCase))
                 .findFirst()
-                .orElseThrow(AssertionError::new);
+                .orElseThrow();
           }
 
           Message sentMessage = BehaviorCommands.replyMulti(reference, structures);
@@ -156,15 +151,15 @@ final class Listener extends ListenerAdapter {
             return;
           }
           Path cacheDir = FileUtil.createTempDir();
-          List<Path> packs = message.getAttachments()
-              .stream()
-              .filter(e -> MCExtension.MCPACK.toString().equalsIgnoreCase(e.getFileExtension()))
-              .collect(Collectors.collectingAndThen(Collectors.toList(), l -> AttachmentUtil.download(l, cacheDir)));
-          BehaviorCommands.replySingleFromBehaviors(message, packs);
+          BehaviorCommands.replySingleFromBehaviors(message, AttachmentUtil.download(message, cacheDir, MCExtension.MCPACK.toString()));
           FileUtil.delete(cacheDir);
         }
 
-        // TODO: support INDEX button
+        case INDEX -> {
+          Path cacheDir = FileUtil.createTempDir();
+          AddonCommands.replyIndex(message, AttachmentUtil.download(message, cacheDir, MCExtension.MCPACK.toString()));
+          FileUtil.delete(cacheDir);
+        }
 
         case OK, DELETE -> UtilCommands.deleteMessage(message);
 

@@ -30,6 +30,26 @@ final class AttachmentUtil {
   private static final EmbedBuilder COUNT_EMBED_BUILDER = new EmbedBuilder()
       .setColor(Color.CYAN);
 
+  public static List<Path> download(Message message, Path directory, String... extensions) {
+    return download(message, directory, List.of(extensions));
+  }
+
+  public static List<Path> download(Message message, Path directory, Collection<String> extensions) {
+    return download(List.of(message), directory, extensions);
+  }
+
+  public static List<Path> download(Collection<Message> messages, Path directory, String... extensions) {
+    return download(messages, directory, List.of(extensions));
+  }
+
+  public static List<Path> download(Collection<Message> messages, Path directory, Collection<String> extensions) {
+    return download(messages.stream()
+        .map(Message::getAttachments)
+        .flatMap(List::stream)
+        .filter(a -> extensions.stream().anyMatch(e -> e.equalsIgnoreCase(a.getFileExtension())))
+        .toList(), directory);
+  }
+
   public static Path download(Message.Attachment attachment, Path directory) {
     return download(List.of(attachment), directory).get(0);
   }
