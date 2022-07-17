@@ -13,7 +13,7 @@ import java.nio.file.Files;
 import java.nio.file.FileSystems;
 import java.nio.file.Path;
 import java.util.Collection;
-import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Stream;
 
@@ -42,11 +42,7 @@ public final class FileUtil {
 
   public static void delete(Path path) {
     try (Stream<Path> stream = Files.walk(path)) {
-      List<Path> list = stream.toList();
-      Collections.reverse(list);
-      for (var p : list) {
-        Files.deleteIfExists(p);
-      }
+      stream.sorted(Comparator.reverseOrder()).forEach(Files::deleteIfExists);
     } catch (IOException e) {
       throw new UncheckedIOException(e);
     }
