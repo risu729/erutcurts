@@ -14,6 +14,8 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.io.UncheckedIOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.time.temporal.ChronoUnit;
 import java.util.Arrays;
 import java.util.EnumSet;
@@ -26,6 +28,8 @@ import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.interactions.components.ActionRow;
 import net.dv8tion.jda.api.interactions.components.buttons.Button;
+
+import io.github.risu729.erutcurts.util.FileUtil;
 
 final class UtilCommands {
 
@@ -41,8 +45,10 @@ final class UtilCommands {
       .setTitle("DEBUG")
       .setColor(Color.BLACK);
   private static final ActionRow HELP_ACTION_ROW = ActionRow.of(DELETE.toButton(), HELP_URL.toButton());
-  private static final ActionRow ERROR_ACTION_ROW = ActionRow.of(OK.toButton(), HELP.toButton());
+  private static final ActionRow ERROR_ACTION_ROW = ActionRow.of(OK.toButton(), DETAIL_ERROR.toButton(), HELP.toButton());
+  private static final ActionRow STACK_TRACE_ACTION_ROW = ActionRow.of(OK.toButton(), HELP.toButton());
   private static final ActionRow DEBUG_INFO_ACTION_ROW = ActionRow.of(DELETE.toButton());
+  private static final String STACK_TRACE_FILE_NAME = "stacktrace";
 
   public static void replyHelp(Message message) {
     long time = System.currentTimeMillis();
@@ -57,17 +63,38 @@ final class UtilCommands {
   }
 
   public static void replyError(Message message, Throwable throwable) {
-    String stackTrace;
+    Path tempDir = FileUtil.createTempDir();
+    Path stackTrace = tempDir.resolve(Path.of(STACK_TRACE_FILE_NAME));
     try (var sw = new StringWriter();
         var pw = new PrintWriter(sw)) {
       throwable.printStackTrace(pw);
       pw.flush();
-      stackTrace = sw.toString();
+      Files.writeString(stackTrace, sw.toString());
+    } catch (IOException e) {
+      throw new UncheckedIOException(e);
+    }
+    message.replyEmbeds(new EmbedBuilder(ERROR_EMBED_BUILDER).setDescription(throwable.toString()).build())
+        .addFile(stackTrace.toFile())
+        .setActionRows(ERROR_ACTION_ROW)
+        .mentionRepliedUser(false)
+        .queue();
+    FileUtil.delete(tempDir);
+  }
+
+  public static void replyStackTrace(Message message) {
+    List<Message.Attachment> attachments = message.getAttachments();
+    if (attachments.size() != 1 || attachments.get(0).getFileName().equals(STACK_TRACE_FILE_NAME)) {
+      throw new IllegalArgumentException("message has several attachments or doesn't have a stacktrace attachment: " + message);
+    }
+    Path tempDir = FileUtil.createTempDir();
+    String stackTrace;
+    try {
+      stackTrace = Files.readString(AttachmentUtil.download(attachments.get(0), tempDir));
     } catch (IOException e) {
       throw new UncheckedIOException(e);
     }
     message.replyEmbeds(new EmbedBuilder(ERROR_EMBED_BUILDER).setDescription(stackTrace).build())
-        .setActionRows(ERROR_ACTION_ROW)
+        .setActionRows(STACK_TRACE_ACTION_ROW)
         .mentionRepliedUser(false)
         .queue();
   }

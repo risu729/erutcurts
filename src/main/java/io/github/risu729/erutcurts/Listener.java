@@ -187,6 +187,8 @@ final class Listener extends ListenerAdapter {
           UtilCommands.disableButtons(message, CustomizedButton.CONTINUE_RESTART);
         }
 
+        case DETAIL_ERROR -> UtilCommands.replyStackTrace(message);
+
         default -> throw new UnsupportedOperationException("Unsuppported Button: " + button);
       }
     } catch (RuntimeException | Error e) {

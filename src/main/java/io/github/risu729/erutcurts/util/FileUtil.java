@@ -59,7 +59,7 @@ public final class FileUtil {
   public static boolean isExtension(Path path, Collection<String> extensions) {
     var fileSystem = FileSystems.getDefault();
     return extensions.stream()
-        .map(s -> "glob:*." + s)
+        .map(s -> "glob:**." + s)
         .map(fileSystem::getPathMatcher)
         .anyMatch(m -> m.matches(path));
   }

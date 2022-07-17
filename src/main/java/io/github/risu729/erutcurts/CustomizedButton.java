@@ -24,7 +24,8 @@ enum CustomizedButton {
   OK(ButtonStyle.SUCCESS, "OK"),
   OK_LONG_STANDBY(ButtonStyle.SUCCESS, "OK"),
   DISMISS_LONG_STANDBY(ButtonStyle.DANGER, "Dismiss"),
-  CONTINUE_RESTART(ButtonStyle.SUCCESS, "Continue");
+  CONTINUE_RESTART(ButtonStyle.SUCCESS, "Continue"),
+  DETAIL_ERROR(ButtonStyle.PRIMARY, "Detail");
 
   public static Optional<CustomizedButton> fromButton(Button button) {
     return fromID(button.getId());

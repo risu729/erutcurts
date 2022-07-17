@@ -30,6 +30,10 @@ final class AttachmentUtil {
   private static final EmbedBuilder COUNT_EMBED_BUILDER = new EmbedBuilder()
       .setColor(Color.CYAN);
 
+  public static Path download(Message.Attachment attachment, Path directory) {
+    return download(List.of(attachment), directory).get(0);
+  }
+
   public static List<Path> download(Collection<Message.Attachment> attachments, Path directory) {
     if (!Files.isDirectory(directory)) {
       throw new IllegalArgumentException("path is not a directory: " + directory);
