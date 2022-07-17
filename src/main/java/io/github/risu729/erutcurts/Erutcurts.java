@@ -23,7 +23,7 @@ import io.github.risu729.erutcurts.util.FileUtil;
 
 public final class Erutcurts {
 
-  public static final String VERSION = "0.5.7";
+  public static final String VERSION = "0.5.8";
   public static final Path TEMP_DIR = Path.of(System.getProperty("java.io.tmpdir")).resolve(Path.of("Erutcurts"));
   public static final OffsetDateTime LAST_RESTART = OffsetDateTime.now(ZoneOffset.UTC);
 

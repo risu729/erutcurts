@@ -12,8 +12,8 @@ import static io.github.risu729.erutcurts.CustomizedButton.*;
 import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.nio.file.Path;
-import java.util.ArrayList;
 import java.util.Collection;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -47,16 +47,24 @@ final class BehaviorCommands {
     if (packs.isEmpty()) {
       throw new IllegalArgumentException("packs collection is empty: " + packs);
     }
-    return packs.stream()
+
+    List<StructureAddon> addons = new LinkedList<>();
+    try {
+      return packs.stream()
         .map(p -> {
-          try (var addon = StructureAddon.fromBehavior(p)) {
-            return addon.getStructures();
-          } catch (IOException e) {
-            throw new UncheckedIOException(e);
-          }
-        })
-        .flatMap(Collection::stream)
-        .collect(Collectors.collectingAndThen(Collectors.toList(), l -> replySingle(message, l)));
+            try {
+              var addon = StructureAddon.fromBehavior(p);
+              addons.add(addon);
+              return addon.getStructures();
+            } catch (IOException e) {
+              throw new UncheckedIOException(e);
+            }
+          })
+          .flatMap(Collection::stream)
+          .collect(Collectors.collectingAndThen(Collectors.toList(), l -> replySingle(message, l)));
+    } finally {
+      addons.forEach(StructureAddon::close);
+    }
   }
 
   public static List<Message> replySingle(Message message, Collection<Path> structures) {
@@ -64,7 +72,7 @@ final class BehaviorCommands {
       throw new IllegalArgumentException("structures collection is empty: " + structures);
     }
     Path tempDir = FileUtil.createTempDir();
-    List<Path> packPath = new ArrayList<>();
+    List<Path> packPath = new LinkedList<>();
     for (var p : structures) {
       try (var addon = StructureAddon.of(p)) {
         packPath.add(addon.generateBehavior(tempDir));
