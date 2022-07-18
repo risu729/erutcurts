@@ -18,12 +18,13 @@ import javax.security.auth.login.LoginException;
 import net.dv8tion.jda.api.entities.Activity;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
+import net.dv8tion.jda.api.requests.GatewayIntent;
 
 import io.github.risu729.erutcurts.util.FileUtil;
 
 public final class Erutcurts {
 
-  public static final String VERSION = "0.5.11";
+  public static final String VERSION = "0.5.12";
   public static final Path TEMP_DIR = Path.of(System.getProperty("java.io.tmpdir")).resolve(Path.of("Erutcurts"));
   public static final OffsetDateTime LAST_RESTART = OffsetDateTime.now(ZoneOffset.UTC);
 
@@ -32,6 +33,7 @@ public final class Erutcurts {
     JDA jda;
     try {
       jda = JDABuilder.createDefault(System.getenv().get("BOT_TOKEN"))
+          .enableIntents(GatewayIntent.MESSAGE_CONTENT)
           .setActivity(Activity.playing(Command.HELP.getFullFormCommand()))
           .addEventListeners(listener)
           .setEnableShutdownHook(false) // disable shutdown hook of jda to define order of hooks
