@@ -25,19 +25,6 @@
       <url>https://opensource.org/licenses/MIT</url>
     </license>
   </licenses>
-  
-  <repositories>
-    <repository>
-      <id>central</id>
-      <name>Central Repository</name>
-      <url>https://repo.maven.apache.org/maven2</url>
-    </repository>
-    <repository>
-      <id>github</id>
-      <name>mcbe-manifest4j repository</name>
-      <url>https://maven.pkg.github.com/risu729/mcbe-manifest4j</url>
-    </repository>
-  </repositories>
 
   <dependencies>
     <dependency>
