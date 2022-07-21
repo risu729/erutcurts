@@ -33,8 +33,8 @@
   <servers>
     <server>
       <id>github</id>
-      <username>%{env.USERNAME}</username>
-      <password>%{env.PAT}</password>
+      <username>risu729</username>
+      <password>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</password>
     </server>
   </servers>
 </settings>
