@@ -14,7 +14,7 @@ import java.util.Optional;
 import net.dv8tion.jda.api.interactions.components.buttons.Button;
 import net.dv8tion.jda.api.interactions.components.buttons.ButtonStyle;
 
-enum CustomizedButton {
+public enum CustomizedButton {
 
   SINGLE(ButtonStyle.PRIMARY, "Single"),
   INDEX(ButtonStyle.PRIMARY, "Index"),

@@ -25,9 +25,9 @@ import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.utils.TimeUtil;
 
-import io.github.risu729.command.AddonCommands;
-import io.github.risu729.command.BehaviorCommands;
-import io.github.risu729.command.UtilCommands;
+import io.github.risu729.erutcurts.command.AddonCommands;
+import io.github.risu729.erutcurts.command.BehaviorCommands;
+import io.github.risu729.erutcurts.command.UtilCommands;
 import io.github.risu729.erutcurts.structure.MCExtension;
 import io.github.risu729.erutcurts.util.AttachmentUtil;
 import io.github.risu729.erutcurts.util.FileUtil;

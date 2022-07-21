@@ -14,7 +14,7 @@ import java.util.Locale;
 import java.util.Optional;
 import java.util.stream.Stream;
 
-enum Command {
+public enum Command {
 
   DEBUG(true), // TODO: delete this
   HELP("h"),

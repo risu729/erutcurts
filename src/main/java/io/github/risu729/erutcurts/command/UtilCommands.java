@@ -29,6 +29,9 @@ import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.interactions.components.ActionRow;
 import net.dv8tion.jda.api.interactions.components.buttons.Button;
 
+import io.github.risu729.erutcurts.CustomizedButton;
+import io.github.risu729.erutcurts.Erutcurts;
+import io.github.risu729.erutcurts.util.AttachmentUtil;
 import io.github.risu729.erutcurts.util.FileUtil;
 
 public final class UtilCommands {
