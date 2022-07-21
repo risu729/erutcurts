@@ -10,13 +10,12 @@ package io.github.risu729.erutcurts;
 import java.nio.file.Path;
 import java.time.Duration;
 import java.util.Comparator;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.stream.Collectors;
 import java.util.TreeSet;
 
 import net.dv8tion.jda.api.entities.Message;
@@ -38,7 +37,7 @@ final class Listener extends ListenerAdapter {
   private final PackageManager packageManager = new PackageManager();
 
   // key is the ID of sent message
-  private final Map<Long, List<Path>> structureCaches = new HashMap<>();
+  private final Map<Long, List<Path>> structureCaches = new ConcurrentHashMap<>();
   private final ScheduledExecutorService cacheDeleteScheduler = SchedulerUtil.newScheduledDaemonThreadPool(5);
 
   @Override
@@ -89,6 +88,7 @@ final class Listener extends ListenerAdapter {
 
           if (isPackageMode) {
             targetMessages.addAll(packageManager.getMessagesInPackage(message));
+            packageManager.disablePackageMode(channel);
           }
 
          Path cacheDir;

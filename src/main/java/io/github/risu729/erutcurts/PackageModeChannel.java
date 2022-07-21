@@ -11,19 +11,22 @@ import java.util.concurrent.ScheduledFuture;
 import java.util.Objects;
 
 import net.dv8tion.jda.api.entities.MessageChannel;
+import net.dv8tion.jda.api.JDA;
 
 final class PackageModeChannel {
 
-  private final MessageChannel channel;
+  private final JDA jda;
+  private final long id;
   private ScheduledFuture<?> longStandbyAlert;
   private ScheduledFuture<?> packageTermination;
 
   public PackageModeChannel(MessageChannel channel) {
-    this.channel = channel;
+    this.jda = channel.getJDA();
+    this.id = channel.getIdLong();
   }
 
   public MessageChannel getChannel() {
-    return channel;
+    return jda.getChannelById(MessageChannel.class, id);
   }
 
   public void setLongStandbyAlert(ScheduledFuture<?> longStandbyAlert) {
@@ -77,8 +80,10 @@ final class PackageModeChannel {
   @Override
   public String toString() {
     var str = new StringBuilder();
-    str.append("channel: ");
-    str.append(channel);
+    str.append("id: ");
+    str.append(id);
+    str.append("\nchannel: ");
+    str.append(getChannel());
     str.append("\nlongStandbyAlert: ");
     str.append(longStandbyAlert);
     str.append("\npackageTermination: ");

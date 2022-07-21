@@ -11,11 +11,10 @@ import static io.github.risu729.erutcurts.CustomizedButton.*;
 
 import java.awt.Color;
 import java.time.Duration;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
-
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -57,7 +56,7 @@ final class PackageManager {
   private static final ActionRow RESTART_ACTION_ROW = ActionRow.of(CONTINUE_RESTART.toButton(), DELETE.toButton(), HELP.toButton());
 
   // key is the ID of channel
-  private final Map<Long, PackageModeChannel> packageModeChannels = new HashMap<>();
+  private final Map<Long, PackageModeChannel> packageModeChannels = new ConcurrentHashMap<>();
 
   private final ScheduledExecutorService longStandbyAlertScheduler = SchedulerUtil.newScheduledDaemonThreadPool(5);
 
