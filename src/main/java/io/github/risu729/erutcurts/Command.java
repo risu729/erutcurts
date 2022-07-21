@@ -13,10 +13,12 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
 import java.util.stream.Stream;
+
 enum Command {
 
   DEBUG(true), // TODO: delete this
   HELP("h"),
+  INFO("i"),
   PACKAGE("p"),
   PACKAGE_CONTINUE("packagecon", "pcontinue", "pcon"),
   CANCEL("c"),
@@ -34,10 +36,6 @@ enum Command {
   }
 
   private final List<String> commands;
-
-  {
-    
-  }
 
   private Command(boolean doIncludeIdentifier) {
     this(doIncludeIdentifier, new String[0]);

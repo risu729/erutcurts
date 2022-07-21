@@ -5,7 +5,7 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-package io.github.risu729.erutcurts;
+package io.github.risu729.erutcurts.command;
 
 import static io.github.risu729.erutcurts.CustomizedButton.*;
 
@@ -21,9 +21,10 @@ import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.interactions.components.ActionRow;
 
 import io.github.risu729.erutcurts.structure.StructureAddon;
+import io.github.risu729.erutcurts.util.AttachmentUtil;
 import io.github.risu729.erutcurts.util.FileUtil;
 
-final class BehaviorCommands {
+public final class BehaviorCommands {
 
   private static final ActionRow MULTI_ACTION_ROW = ActionRow.of(
       SINGLE.toButton(), INDEX.toButton(), DELETE.toButton(), HELP.toButton());
@@ -83,5 +84,9 @@ final class BehaviorCommands {
     var result = AttachmentUtil.replyFiles(message, packPath, SINGLE_ACTION_ROW);
     FileUtil.delete(tempDir);
     return result;
+  }
+
+  private BehaviorCommands() {
+    throw new AssertionError();
   }
 }

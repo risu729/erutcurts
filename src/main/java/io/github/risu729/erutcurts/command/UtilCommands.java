@@ -5,7 +5,7 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-package io.github.risu729.erutcurts;
+package io.github.risu729.erutcurts.command;
 
 import static io.github.risu729.erutcurts.CustomizedButton.*;
 
@@ -31,12 +31,18 @@ import net.dv8tion.jda.api.interactions.components.buttons.Button;
 
 import io.github.risu729.erutcurts.util.FileUtil;
 
-final class UtilCommands {
+public final class UtilCommands {
 
   private static final MessageEmbed HELP_EMBED = new EmbedBuilder()
       .setTitle("Help")
       .setColor(Color.LIGHT_GRAY)
       .setDescription("Maybe written later...?")
+      .build();
+  private static final MessageEmbed INFO_EMBED = new EmbedBuilder()
+      .setTitle("Info")
+      .setColor(Color.BLACK)
+      .addField("Version", Erutcurts.VERSION, true)
+      .addField("Last Restart", Erutcurts.LAST_RESTART.truncatedTo(ChronoUnit.SECONDS).toString(), true)
       .build();
   private static final EmbedBuilder ERROR_EMBED_BUILDER = new EmbedBuilder()
       .setTitle("ERROR")
@@ -45,9 +51,9 @@ final class UtilCommands {
       .setTitle("DEBUG")
       .setColor(Color.BLACK);
   private static final ActionRow HELP_ACTION_ROW = ActionRow.of(DELETE.toButton(), HELP_URL.toButton());
+  private static final ActionRow INFO_ACTION_ROW = ActionRow.of(DELETE.toButton());
   private static final ActionRow ERROR_ACTION_ROW = ActionRow.of(OK.toButton(), DETAIL_ERROR.toButton(), HELP.toButton());
   private static final ActionRow STACK_TRACE_ACTION_ROW = ActionRow.of(OK.toButton(), HELP.toButton());
-  private static final ActionRow DEBUG_INFO_ACTION_ROW = ActionRow.of(DELETE.toButton());
   private static final String STACK_TRACE_FILE_NAME = "stacktrace";
 
   public static void replyHelp(Message message) {
@@ -55,9 +61,16 @@ final class UtilCommands {
     message.replyEmbeds(HELP_EMBED)
         .setActionRows(HELP_ACTION_ROW)
         .mentionRepliedUser(false)
-        .queue(m -> m.editMessageEmbeds(new EmbedBuilder(HELP_EMBED)
-                .setFooter(String.format("version: %s\nlast restart: %s\nping: %d ms", Erutcurts.VERSION,
-                    Erutcurts.LAST_RESTART.truncatedTo(ChronoUnit.SECONDS).toString(), System.currentTimeMillis() - time))
+        .queue();
+  }
+
+  public static void replyInfo(Message message) {
+    long time = System.currentTimeMillis();
+    message.replyEmbeds(INFO_EMBED)
+        .setActionRows(INFO_ACTION_ROW)
+        .mentionRepliedUser(false)
+        .queue(m -> m.editMessageEmbeds(new EmbedBuilder(INFO_EMBED)
+                .setFooter(String.format("ping: %d ms", System.currentTimeMillis() - time))
                 .build())
             .queue());
   }
@@ -101,7 +114,7 @@ final class UtilCommands {
 
   public static void replyDebugInfo(Message message, Object o) {
     message.replyEmbeds(new EmbedBuilder(DEBUG_INFO_EMBED_BUILDER).setDescription(String.valueOf(o)).build())
-        .setActionRows(DEBUG_INFO_ACTION_ROW)
+        .setActionRows(INFO_ACTION_ROW)
         .mentionRepliedUser(false)
         .queue();
   }

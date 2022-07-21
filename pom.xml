@@ -7,7 +7,7 @@
 
   <groupId>io.github.risu729</groupId>
   <artifactId>erutcurts</artifactId>
-  <version>0.5.13</version>
+  <version>0.5.14</version>
 
   <name>${project.artifactId}</name>
   <url>https://github.com/risu729/${project.artifactId}</url>
@@ -25,12 +25,30 @@
       <url>https://opensource.org/licenses/MIT</url>
     </license>
   </licenses>
+  
+  <repositories>
+    <repository>
+      <id>project.local</id>
+      <name>project</name>
+      <url>file:${project.basedir}/repo</url>
+    </repository>
+  </repositories>
 
   <dependencies>
     <dependency>
-      <groupId>com.google.code.gson</groupId>
-      <artifactId>gson</artifactId>
-      <version>2.9.0</version>
+      <groupId>ch.qos.logback</groupId>
+      <artifactId>logback-classic</artifactId>
+      <version>1.2.11</version>
+    </dependency>
+    <dependency>
+      <groupId>dev.dewy</groupId>
+      <artifactId>nbt</artifactId>
+      <version>1.5.1</version>
+    </dependency>
+    <dependency>
+      <groupId>io.github.risu729</groupId>
+      <artifactId>mcbe-manifest4j</artifactId>
+      <version>0.6.0</version>
     </dependency>
     <dependency>
       <groupId>net.dv8tion</groupId>
@@ -41,11 +59,6 @@
       <groupId>net.lingala.zip4j</groupId>
       <artifactId>zip4j</artifactId>
       <version>2.11.1</version>
-    </dependency>
-    <dependency>
-      <groupId>ch.qos.logback</groupId>
-      <artifactId>logback-classic</artifactId>
-      <version>1.2.11</version>
     </dependency>
   </dependencies>
   

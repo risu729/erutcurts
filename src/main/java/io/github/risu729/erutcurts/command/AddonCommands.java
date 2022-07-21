@@ -5,7 +5,7 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-package io.github.risu729.erutcurts;
+package io.github.risu729.erutcurts.command;
 
 import static io.github.risu729.erutcurts.CustomizedButton.*;
 
@@ -22,7 +22,7 @@ import net.dv8tion.jda.api.interactions.components.ActionRow;
 
 import io.github.risu729.erutcurts.structure.StructureAddon;
 
-final class AddonCommands {
+public final class AddonCommands {
 
   private static final EmbedBuilder INDEX_EMBED_BUILDER = new EmbedBuilder()
       .setTitle("Index")

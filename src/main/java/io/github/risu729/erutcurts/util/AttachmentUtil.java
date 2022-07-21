@@ -5,7 +5,7 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-package io.github.risu729.erutcurts;
+package io.github.risu729.erutcurts.util;
 
 import java.awt.Color;
 import java.io.IOException;
@@ -25,7 +25,7 @@ import net.dv8tion.jda.api.interactions.components.ActionRow;
 import net.dv8tion.jda.api.requests.restaction.MessageAction;
 import net.dv8tion.jda.api.utils.FileProxy;
 
-final class AttachmentUtil {
+public final class AttachmentUtil {
 
   private static final EmbedBuilder COUNT_EMBED_BUILDER = new EmbedBuilder()
       .setColor(Color.CYAN);
