@@ -65,7 +65,11 @@ final class Listener extends ListenerAdapter {
     try {
       switch (command) {
         case DEBUG -> {
-          UtilCommands.replyDebugInfo(message, AttachmentUtil.getSeparatedMessages(message.getReferencedMessage()));
+          Message temp = message;
+          for (int i = 0; i < 10; i++) {
+            UtilCommands.replyDebugInfo(message, temp.getReferencedMessage());
+            temp = temp.getReferencedMessage();
+          }
         }
 
         case HELP -> UtilCommands.replyHelp(message);
