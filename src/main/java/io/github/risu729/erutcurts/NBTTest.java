@@ -7,6 +7,8 @@
 
 package io.github.risu729.erutcurts;
 
+import java.io.IOException;
+import java.io.UncheckedIOException;
 import java.nio.file.Path;
 
 import dev.dewy.nbt.Nbt;
@@ -17,6 +19,10 @@ import io.github.risu729.erutcurts.command.*;
 final class NBTTest {
 
   public static void replyNBT(Message message, Path nbt) {
-    UtilCommands.replyDebugInfo(message, new Nbt().fromFile(nbt.toFile()));
+    try {
+      UtilCommands.replyDebugInfo(message, new Nbt().fromFile(nbt.toFile()));
+    } catch (IOException e) {
+      throw new UncheckedIOException(e);
+    }
   }
 }
