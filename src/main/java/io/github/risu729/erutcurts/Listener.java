@@ -168,7 +168,7 @@ final class Listener extends ListenerAdapter {
           FileUtil.delete(cacheDir);
         }
 
-        case OK, DELETE -> UtilCommands.deleteMessage(message);
+        case OK, DELETE -> AttachmentUtil.getSeparatedMessages(message).stream().forEach(UtilCommands::deleteMessage);
 
         case OK_LONG_STANDBY -> {
           packageManager.disablePackageMode(channel);
