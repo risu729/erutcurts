@@ -33,6 +33,11 @@
       <version>1.2.11</version>
     </dependency>
     <dependency>
+      <groupId>com.github.steveice10</groupId>
+      <artifactId>opennbt</artifactId>
+      <version>1.5-SNAPSHOT</version>
+    </dependency>
+    <dependency>
       <groupId>dev.dewy</groupId>
       <artifactId>nbt</artifactId>
       <version>1.5.1</version>
