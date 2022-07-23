@@ -20,6 +20,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.UUID;
 
@@ -48,11 +49,11 @@ public final class AttachmentUtil {
   }
 
   public static List<Path> download(Collection<Message> messages, Path directory, Collection<String> extensions) {
-    return download(messages.stream()
+    return messages.stream()
         .map(Message::getAttachments)
         .flatMap(List::stream)
-        .filter(a -> extensions.stream().anyMatch(e -> e.equalsIgnoreCase(a.getFileExtension())))
-        .toList(), directory);
+        .filter(a -> extensions.isEmpty() ? true : extensions.stream().anyMatch(e -> e.equalsIgnoreCase(a.getFileExtension())))
+        .collect(Collectors.collectingAndThen(Collectors.toList(), l -> download(l, directory)));
   }
 
   public static Path download(Message.Attachment attachment, Path directory) {
