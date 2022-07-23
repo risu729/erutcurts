@@ -194,7 +194,7 @@ final class Listener extends ListenerAdapter {
         default -> throw new UnsupportedOperationException("Unsuppported Button: " + button);
       }
     } catch (RuntimeException e) {
-      UtilCommands.replyErrror(message, e);
+      UtilCommands.replyError(message, e);
       throw e;
     }
   }
