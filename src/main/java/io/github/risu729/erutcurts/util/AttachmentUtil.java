@@ -145,11 +145,10 @@ public final class AttachmentUtil {
     Optional<UUID> uuid = getUUID(message);
     io.github.risu729.erutcurts.command.UtilCommands.replyDebugInfo(message, uuid); // DEBUG
     if (uuid.isEmpty()) {
-      io.github.risu729.erutcurts.command.UtilCommands.replyDebugInfo(message, "EMPTY!!!"); // DEBUG
       return List.of(message);
     }
-    for (Message temp = message; temp != null; temp = temp.getReferencedMessage()) {
-      io.github.risu729.erutcurts.command.UtilCommands.replyDebugInfo(message, temp); // DEBUG
+    for (Message temp = message; temp != null; temp = temp.getReferencedMessage(), io.github.risu729.erutcurts.command.UtilCommands.replyDebugInfo(message, temp)) {
+      io.github.risu729.erutcurts.command.UtilCommands.replyDebugInfo(message, temp.getContentRaw()); // DEBUG
     }
     return Stream.iterate(message,
             m -> m != null /*&& m.getAuthor().getIdLong() == selfUserID && getUUID(m).equals(uuid)*/, Message::getReferencedMessage)
