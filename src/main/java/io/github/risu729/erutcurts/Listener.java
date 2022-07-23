@@ -67,8 +67,8 @@ final class Listener extends ListenerAdapter {
         case DEBUG -> {
           Message temp = message;
           for (int i = 0; i < 10; i++) {
-            UtilCommands.replyDebugInfo(message, temp.getReferencedMessage());
-            temp = temp.getReferencedMessage();
+            UtilCommands.replyDebugInfo(message, temp.getMessageReference().resolve().complete());
+            temp = temp.getMessageReference().resolve().complete();
           }
         }
 
