@@ -65,7 +65,7 @@ final class Listener extends ListenerAdapter {
     try {
       switch (command) {
         case DEBUG -> {
-          UtilCommands.replyDebugInfo(message, packageManager.getPackageModeChannel(channel));
+          UtilCommands.replyDebugInfo(message, AttachmentUtil.getSeparatedMessages(message.getReferencedMessage()));
         }
 
         case HELP -> UtilCommands.replyHelp(message);
@@ -163,7 +163,8 @@ final class Listener extends ListenerAdapter {
 
         case INDEX -> {
           Path cacheDir = FileUtil.createTempDir();
-          AddonCommands.replyIndex(message, AttachmentUtil.download(message, cacheDir, MCExtension.MCPACK.toString()));
+          AddonCommands.replyIndex(message, AttachmentUtil.download(AttachmentUtil.getSeparatedMessages(message),
+              cacheDir, MCExtension.MCPACK.toString()));
           FileUtil.delete(cacheDir);
         }
 
@@ -192,8 +193,8 @@ final class Listener extends ListenerAdapter {
 
         default -> throw new UnsupportedOperationException("Unsuppported Button: " + button);
       }
-    } catch (RuntimeException | Error e) {
-      UtilCommands.replyError(message, e);
+    } catch (RuntimeException e) {
+      UtilCommands.replyErrror(message, e);
       throw e;
     }
   }

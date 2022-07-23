@@ -18,9 +18,14 @@ import java.util.Collections;
 import java.util.concurrent.ExecutionException;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.stream.Stream;
+import java.util.UUID;
 
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Message;
+import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.interactions.components.ActionRow;
 import net.dv8tion.jda.api.requests.restaction.MessageAction;
 import net.dv8tion.jda.api.utils.FileProxy;
@@ -29,6 +34,8 @@ public final class AttachmentUtil {
 
   private static final EmbedBuilder COUNT_EMBED_BUILDER = new EmbedBuilder()
       .setColor(Color.CYAN);
+
+  private static final String SPOILER_MARKDOWN = "||";
 
   public static List<Path> download(Message message, Path directory, String... extensions) {
     return download(message, directory, List.of(extensions));
@@ -95,7 +102,7 @@ public final class AttachmentUtil {
             String.format("File size exceeds the allowed size (%.2f MiB): %.2f MiB",
                 (double) maxFileSize / 1024 / 1024, (double) fileSize / 1024 / 1024));
       }
-      if (fileCount + 1 > Message.MAX_FILE_AMOUNT || totalFileSize + fileSize >= maxFileSize) {
+      if (fileCount + 1 > Message.MAX_FILE_AMOUNT - 8 /* !!!DEBUG!!! */|| totalFileSize + fileSize >= maxFileSize) {
         separationIndex.add(index);
         fileCount = 0;
         totalFileSize = 0L;
@@ -107,6 +114,7 @@ public final class AttachmentUtil {
       }
     }
 
+    String spoilerUUID = SPOILER_MARKDOWN + UUID.randomUUID().toString() + SPOILER_MARKDOWN;
     int messageAmount = separationIndex.size();
     List<Message> sentMessages = new ArrayList<>();
     for (int i = 0; i < messageAmount; i++) {
@@ -114,12 +122,14 @@ public final class AttachmentUtil {
       int untilIndex = separationIndex.get(i);
       String count = fromIndex + 1 == untilIndex ? String.format("%d / %d", fromIndex + 1, files.size())
           : String.format("%d ~ %d / %d", fromIndex + 1, untilIndex, files.size());
-      MessageAction messageAction = message.replyEmbeds(
-              new EmbedBuilder(COUNT_EMBED_BUILDER).setTitle(count).build())
-          .mentionRepliedUser(false)
-          .setActionRows(actionRow);
+      MessageAction messageAction = (sentMessages.isEmpty() ? message : sentMessages.get(sentMessages.size() - 1))
+          .replyEmbeds(new EmbedBuilder(COUNT_EMBED_BUILDER).setTitle(count).setFooter(spoilerUUID).build())
+          .mentionRepliedUser(false);
       if (messageAmount == 1) {
         messageAction.setEmbeds(Collections.emptyList());
+      }
+      if (i == messageAmount - 1) { // finally
+        messageAction.setActionRows(actionRow);
       }
       for (Path p : files.subList(fromIndex, untilIndex)) {
         messageAction.addFile(p.toFile());
@@ -127,6 +137,44 @@ public final class AttachmentUtil {
       sentMessages.add(messageAction.complete());
     }
     return sentMessages;
+  }
+
+  public static List<Message> getSeparatedMessages(Message message) {
+    long selfUserID = message.getJDA().getSelfUser().getIdLong();
+    if (message.getAuthor().getIdLong() != selfUserID) {
+      throw new IllegalArgumentException("message is not by this bot:" + message);
+    }
+    Optional<UUID> uuid = getUUID(message);
+    if (uuid.isEmpty()) {
+      return List.of(message);
+    }
+    return Stream.iterate(message,
+            m -> m.getAuthor().getIdLong() == selfUserID && getUUID(m).equals(uuid), Message::getReferencedMessage)
+        .toList();
+  }
+
+  private static Optional<UUID> getUUID(Message message) {
+    List<UUID> uuid = message.getEmbeds()
+        .stream()
+        .map(MessageEmbed::getFooter)
+        .filter(Objects::nonNull)
+        .map(MessageEmbed.Footer::getText)
+        .filter(Objects::nonNull)
+        .map(s -> s.replace(SPOILER_MARKDOWN, ""))
+        .map(s -> {
+          try {
+            return UUID.fromString(s);
+          } catch (IllegalArgumentException e) {
+            return null;
+          }
+        })
+        .filter(Objects::nonNull)
+        .toList();
+    return switch (uuid.size()) {
+      case 0 -> Optional.empty();
+      case 1 -> Optional.of(uuid.get(0));
+      default -> throw new IllegalStateException("message contains several UUIDs: " + uuid);
+    };
   }
 
   private AttachmentUtil() {

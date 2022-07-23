@@ -7,7 +7,7 @@
 
   <groupId>io.github.risu729</groupId>
   <artifactId>erutcurts</artifactId>
-  <version>0.5.15</version>
+  <version>0.6.0</version>
 
   <name>${project.artifactId}</name>
   <url>https://github.com/risu729/${project.artifactId}</url>
