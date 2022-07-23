@@ -149,7 +149,7 @@ public final class AttachmentUtil {
       return List.of(message);
     }
     return Stream.iterate(message,
-            m -> m.getAuthor().getIdLong() == selfUserID && getUUID(m).equals(uuid), Message::getReferencedMessage)
+            m -> m != null && m.getAuthor().getIdLong() == selfUserID && getUUID(m).equals(uuid), Message::getReferencedMessage)
         .toList();
   }
 
