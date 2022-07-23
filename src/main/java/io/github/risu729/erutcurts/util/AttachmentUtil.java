@@ -100,7 +100,7 @@ public final class AttachmentUtil {
             String.format("File size exceeds the allowed size (%.2f MiB): %.2f MiB",
                 (double) maxFileSize / 1024 / 1024, (double) fileSize / 1024 / 1024));
       }
-      if (fileCount + 1 > Message.MAX_FILE_AMOUNT - 8 /* !!!DEBUG!!! */|| totalFileSize + fileSize >= maxFileSize) {
+      if (fileCount + 1 > Message.MAX_FILE_AMOUNT || totalFileSize + fileSize >= maxFileSize) {
         separationIndex.add(index);
         fileCount = 0;
         totalFileSize = 0L;

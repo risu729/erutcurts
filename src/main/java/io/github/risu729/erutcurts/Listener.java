@@ -68,6 +68,12 @@ final class Listener extends ListenerAdapter {
           UtilCommands.replyDebugInfo(message, AttachmentUtil.getSeparatedMessages(message.getReferencedMessage()));
         }
 
+        case DEBUG2 -> {
+          var cacheDir = FileUtil.createTempDir();
+          NBTTest.replyNBT(message, AttachmentUtil.download(message, cacheDir).get(0));
+          FileUtil.delete(cacheDir);
+        }
+
         case HELP -> UtilCommands.replyHelp(message);
 
         case INFO -> UtilCommands.replyInfo(message);
