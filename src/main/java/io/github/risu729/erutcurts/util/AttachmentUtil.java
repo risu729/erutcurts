@@ -35,8 +35,6 @@ public final class AttachmentUtil {
   private static final EmbedBuilder COUNT_EMBED_BUILDER = new EmbedBuilder()
       .setColor(Color.CYAN);
 
-  private static final String SPOILER_MARKDOWN = "||";
-
   public static List<Path> download(Message message, Path directory, String... extensions) {
     return download(message, directory, List.of(extensions));
   }
@@ -114,7 +112,7 @@ public final class AttachmentUtil {
       }
     }
 
-    String spoilerUUID = SPOILER_MARKDOWN + UUID.randomUUID().toString() + SPOILER_MARKDOWN;
+    UUID uuid = UUID.randomUUID();
     int messageAmount = separationIndex.size();
     List<Message> sentMessages = new ArrayList<>();
     for (int i = 0; i < messageAmount; i++) {
@@ -123,7 +121,7 @@ public final class AttachmentUtil {
       String count = fromIndex + 1 == untilIndex ? String.format("%d / %d", fromIndex + 1, files.size())
           : String.format("%d ~ %d / %d", fromIndex + 1, untilIndex, files.size());
       MessageAction messageAction = (sentMessages.isEmpty() ? message : sentMessages.get(sentMessages.size() - 1))
-          .replyEmbeds(new EmbedBuilder(COUNT_EMBED_BUILDER).setTitle(count).setFooter(spoilerUUID).build())
+          .replyEmbeds(new EmbedBuilder(COUNT_EMBED_BUILDER).setTitle(count).setFooter(uuid.toString()).build())
           .mentionRepliedUser(false);
       if (messageAmount == 1) {
         messageAction.setEmbeds(Collections.emptyList());
@@ -149,7 +147,7 @@ public final class AttachmentUtil {
       return List.of(message);
     }
     return Stream.iterate(message,
-            m -> m != null && m.getAuthor().getIdLong() == selfUserID && getUUID(m).equals(uuid), Message::getReferencedMessage)
+            m -> m != null /*&& m.getAuthor().getIdLong() == selfUserID && getUUID(m).equals(uuid)*/, Message::getReferencedMessage)
         .toList();
   }
 
@@ -160,7 +158,6 @@ public final class AttachmentUtil {
         .filter(Objects::nonNull)
         .map(MessageEmbed.Footer::getText)
         .filter(Objects::nonNull)
-        .map(s -> s.replace(SPOILER_MARKDOWN, ""))
         .map(s -> {
           try {
             return UUID.fromString(s);
