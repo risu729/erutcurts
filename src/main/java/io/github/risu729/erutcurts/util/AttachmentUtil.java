@@ -143,6 +143,7 @@ public final class AttachmentUtil {
       throw new IllegalArgumentException("message is not by this bot:" + message);
     }
     Optional<UUID> uuid = getUUID(message);
+    io.github.risu729.erutcurts.command.UtilCommands.replyDebugInfo(message, uuid); // DEBUG
     if (uuid.isEmpty()) {
       return List.of(message);
     }
