@@ -60,7 +60,6 @@ public final class UtilCommands {
   private static final String STACK_TRACE_FILE_NAME = "stacktrace";
 
   public static void replyHelp(Message message) {
-    long time = System.currentTimeMillis();
     message.replyEmbeds(HELP_EMBED)
         .setActionRows(HELP_ACTION_ROW)
         .mentionRepliedUser(false)
@@ -138,7 +137,7 @@ public final class UtilCommands {
     EnumSet<CustomizedButton> targetButtons = EnumSet.noneOf(CustomizedButton.class);
     targetButtons.addAll(Arrays.asList(buttons));
     List<ActionRow> newActionRows = message.getActionRows()
-        .stream() // Stream<ActionRow>
+        .stream()
         .map(actionRow -> actionRow.getComponents()
             .stream()
             .map(component -> {
