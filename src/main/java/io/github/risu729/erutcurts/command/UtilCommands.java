@@ -116,7 +116,11 @@ public final class UtilCommands {
   }
 
   public static void replyDebugInfo(Message message, Object o) {
-    message.replyEmbeds(new EmbedBuilder(DEBUG_INFO_EMBED_BUILDER).setDescription(String.valueOf(o)).build())
+    var info = String.valueOf(0);
+    if (info.length() > MessageEmbed.DESCRIPTION_MAX_LENGTH) {
+      info = info.substring(0, MessageEmbed.DESCRIPTION_MAX_LENGTH - 1);
+    }
+    message.replyEmbeds(new EmbedBuilder(DEBUG_INFO_EMBED_BUILDER).setDescription(info).build())
         .setActionRows(INFO_ACTION_ROW)
         .mentionRepliedUser(false)
         .queue();
