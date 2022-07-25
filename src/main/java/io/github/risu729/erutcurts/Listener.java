@@ -72,6 +72,8 @@ final class Listener extends ListenerAdapter {
           var cacheDir = FileUtil.createTempDir();
           NBTTest.replyNBT(message, AttachmentUtil.download(message, cacheDir).get(0));
           FileUtil.delete(cacheDir);
+          UtilCommands.replyDebugInfo(message, "HELLO WORLD");
+          throw new RuntimeException();
         }
 
         case HELP -> UtilCommands.replyHelp(message);
