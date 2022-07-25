@@ -116,7 +116,7 @@ public final class UtilCommands {
   }
 
   public static void replyDebugInfo(Message message, Object o) {
-    var info = String.valueOf(0);
+    var info = String.valueOf(o);
     if (info.length() > MessageEmbed.DESCRIPTION_MAX_LENGTH) {
       info = info.substring(0, MessageEmbed.DESCRIPTION_MAX_LENGTH - 1);
     }
