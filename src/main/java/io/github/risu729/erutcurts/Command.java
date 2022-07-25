@@ -16,7 +16,8 @@ import java.util.stream.Stream;
 
 public enum Command {
 
-  DEBUG(true), // TODO: delete this
+  DEBUG(true), // TODO: delete these
+  NBT(true),
   HELP("h"),
   INFO("i"),
   PACKAGE("p"),

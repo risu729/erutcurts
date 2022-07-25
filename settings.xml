@@ -20,8 +20,16 @@
         </repository>
         <repository>
           <id>github</id>
-          <name>mcbe-manifest4j repository</name>
+          <name>mcbe-manifest4j</name>
           <url>https://maven.pkg.github.com/risu729/mcbe-manifest4j</url>
+          <snapshots>
+            <enabled>true</enabled>
+          </snapshots>
+        </repository>
+        <repository>
+          <id>github</id>
+          <name>opennbt</name>
+          <url>https://maven.pkg.github.com/risu729/opennbt</url>
           <snapshots>
             <enabled>true</enabled>
           </snapshots>

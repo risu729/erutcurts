@@ -7,7 +7,7 @@
 
   <groupId>io.github.risu729</groupId>
   <artifactId>erutcurts</artifactId>
-  <version>0.6.6</version>
+  <version>0.7.4</version>
 
   <name>${project.artifactId}</name>
   <url>https://github.com/risu729/${project.artifactId}</url>
@@ -33,9 +33,9 @@
       <version>1.2.11</version>
     </dependency>
     <dependency>
-      <groupId>dev.dewy</groupId>
-      <artifactId>nbt</artifactId>
-      <version>1.5.1</version>
+      <groupId>com.github.steveice10</groupId>
+      <artifactId>opennbt</artifactId>
+      <version>1.4</version>
     </dependency>
     <dependency>
       <groupId>io.github.risu729</groupId>
