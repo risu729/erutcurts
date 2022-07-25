@@ -14,6 +14,7 @@ import java.nio.file.Path;
 
 import com.github.steveice10.opennbt.NBTIO;
 import net.dv8tion.jda.api.entities.Message;
+import net.dv8tion.jda.api.interactions.components.ActionRow;
 
 import io.github.risu729.erutcurts.command.*;
 import io.github.risu729.erutcurts.util.*;
@@ -24,7 +25,7 @@ final class NBTTest {
     Path cacheDir = FileUtil.createTempDir();
     try {
       Path file = Files.writeString(cacheDir.resolve(Path.of("NBT.txt")), NBTIO.readFile(nbt.toFile(), false, true).toString());
-      AttachmentUtil.replySingleFile(message, file);
+      AttachmentUtil.replySingleFile(message, file, ActionRow.of(CustomizedButton.DELETE.toButton()));
     } catch (IOException e) {
       throw new UncheckedIOException(e);
     }
