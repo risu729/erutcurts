@@ -2,7 +2,6 @@ name: Dependabot auto-merge
 
 on:
   pull_request:
-  workflow_dispatch:
 
 jobs:
   auto-merge:
@@ -17,7 +16,7 @@ jobs:
           github-token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Enable Auto-merge
-        if: ${{ steps.metadata.outputs.update-type == version-update:semver-patch }}
+        if: ${{ steps.metadata.outputs.update-type == 'version-update:semver-patch' }}
         run: gh pr merge --auto --merge "$PR_URL"
         env:
           PR_URL: ${{ github.event.pull_request.html_url }}
