@@ -35,6 +35,7 @@ final class NBTTest {
         .<CompoundTag>get("structure")
         .<ListTag>get("block_indices")
         .get(0)
+        .getValue()
         .stream()
         .mapToInt(IntTag::getValue)
         .filter(i -> i != 0)
