@@ -67,8 +67,8 @@ jobs:
         if: steps.filter.outputs.main == 'true'
         run: mvn -s settings.xml -B package --file pom.xml
         env:
-          _GITHUB_USERNAME: ${{ secrets._GITHUB_USERNAME }}
-          _GITHUB_PAT: ${{ secrets._GITHUB_PAT }}
+          _GITHUB_USERNAME: risu729
+          _GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Perform CodeQL Analysis
         if: steps.filter.outputs.main == 'true'
