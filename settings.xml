@@ -14,11 +14,6 @@
       <id>github</id>
       <repositories>
         <repository>
-          <id>central</id>
-          <name>Central Repository</name>
-          <url>https://repo.maven.apache.org/maven2</url>
-        </repository>
-        <repository>
           <id>github</id>
           <name>mcbe-manifest4j</name>
           <url>https://maven.pkg.github.com/risu729/mcbe-manifest4j</url>
@@ -41,8 +36,8 @@
   <servers>
     <server>
       <id>github</id>
-      <username>${_GITHUB_USERNAME}</username>
-      <password>${_GITHUB_PAT}</password>
+      <username>${GITHUB_USERNAME}</username>
+      <password>${GITHUB_TOKEN}</password>
     </server>
   </servers>
 </settings>
