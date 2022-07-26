@@ -69,8 +69,8 @@ jobs:
         if: ${{ steps.filter.outputs.main == 'true' }}
         run: mvn -s settings.xml -B package --file pom.xml
         env:
-          _GITHUB_USERNAME: risu729
-          _GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_USERNAME: risu729
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Perform CodeQL Analysis
         if: ${{ steps.filter.outputs.main == 'true' }}
