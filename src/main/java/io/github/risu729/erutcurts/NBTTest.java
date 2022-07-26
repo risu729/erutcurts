@@ -11,9 +11,12 @@ import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.function.UnaryOperator;
+import java.util.stream.Collectors;
 
 import com.github.steveice10.opennbt.NBTIO;
 import com.github.steveice10.opennbt.SNBTIO;
+import com.github.steveice10.opennbt.tag.builtin.IntTag;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.interactions.components.ActionRow;
 
@@ -25,9 +28,17 @@ final class NBTTest {
   public static void replyNBT(Message message, Path nbt) {
     Path cacheDir = FileUtil.createTempDir();
     try {
-      Path file = cacheDir.resolve(Path.of("NBT.txt"));
-      SNBTIO.writeFile(NBTIO.readFile(nbt.toFile(), false, true), file.toFile(), true);
-      AttachmentUtil.replySingleFile(message, file, ActionRow.of(CustomizedButton.DELETE.toButton()));
+      // Path file = cacheDir.resolve(Path.of("NBT.txt"));
+      NBTIO.readFile(nbt.toFile(), false, true)
+        .get("structure")
+        .get("block_indices")
+        .get(0)
+        .stream()
+        .mapToInt(IntTag::getValue)
+        .filter(i -> i != 0)
+        .collect(Collectors.collectingAndThen(Collectors.groupingBy(UnaryOperator.identity(), Collectors.counting()), m -> UtilCommands.replyDebugInfo(message, m)));
+      // SNBTIO.writeFile(, file.toFile(), true);
+      // AttachmentUtil.replySingleFile(message, file, ActionRow.of(CustomizedButton.DELETE.toButton()));
     } catch (IOException e) {
       throw new UncheckedIOException(e);
     }
