@@ -17,7 +17,7 @@ import java.util.stream.Collectors;
 import com.github.steveice10.opennbt.NBTIO;
 import com.github.steveice10.opennbt.SNBTIO;
 import com.github.steveice10.opennbt.tag.builtin.CompoundTag;
-import com.github.steveice10.opennbt.tag.builtin.IntTag;
+import com.github.steveice10.opennbt.tag.builtin.Tag;
 import com.github.steveice10.opennbt.tag.builtin.ListTag;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.interactions.components.ActionRow;
@@ -34,10 +34,10 @@ final class NBTTest {
       UtilCommands.replyDebugInfo(message, NBTIO.readFile(nbt.toFile(), false, true)
         .<CompoundTag>get("structure")
         .<ListTag>get("block_indices")
-        .get(0)
+        .<ListTag>get(0)
         .getValue()
         .stream()
-        .mapToInt(IntTag::getValue)
+        .mapToInt(Tag::getValue)
         .filter(i -> i != 0)
         .collect(Collectors.groupingBy(UnaryOperator.identity(), Collectors.counting())));
       // SNBTIO.writeFile(, file.toFile(), true);
