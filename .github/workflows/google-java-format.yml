@@ -16,7 +16,7 @@ jobs:
    
       - name: Setup Java JDK
         # https://github.com/marketplace/actions/setup-java-jdk
-        uses: actions/setup-java@v3.4.1
+        uses: actions/setup-java@v3
         with:
           java-version: 17
           distribution: zulu
@@ -25,3 +25,5 @@ jobs:
       - name: Google Java Format
         # https://github.com/marketplace/actions/google-java-format
         uses: axel-op/googlejavaformat-action@v3
+        with:
+          githubToken: ${{ secrets.GITHUB_TOKEN }}
