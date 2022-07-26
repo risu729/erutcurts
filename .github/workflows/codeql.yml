@@ -45,7 +45,7 @@ jobs:
               - settings.xml
    
       - name: Setup Java JDK
-        if: ${{ steps.filter.outputs.main == 'true' }}
+        if: steps.filter.outputs.main == 'true'
         uses: actions/setup-java@v3
         with:
           java-version: 17
@@ -54,7 +54,7 @@ jobs:
 
       # Initializes the CodeQL tools for scanning.
       - name: Initialize CodeQL
-        if: ${{ steps.filter.outputs.main == 'true' }}
+        if: steps.filter.outputs.main == 'true'
         uses: github/codeql-action/init@v2
         with:
           languages: ${{ matrix.language }}
@@ -66,10 +66,10 @@ jobs:
         # queries: security-extended,security-and-quality
 
       - name: Build with Maven
-        if: ${{ steps.filter.outputs.main == 'true' }}
+        if: steps.filter.outputs.main == 'true'
         run: mvn -s settings.xml -B package --file pom.xml
         env:
-          GITHUB_USERNAME: ${{ github.repository_owner }}
+          GITHUB_USERNAME: github.repository_owner
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Perform CodeQL Analysis
