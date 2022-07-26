@@ -10,12 +10,10 @@ package io.github.risu729.erutcurts;
 import java.util.Arrays;
 import java.util.Objects;
 import java.util.Optional;
-
 import net.dv8tion.jda.api.interactions.components.buttons.Button;
 import net.dv8tion.jda.api.interactions.components.buttons.ButtonStyle;
 
 public enum CustomizedButton {
-
   SINGLE(ButtonStyle.PRIMARY, "Single"),
   INDEX(ButtonStyle.PRIMARY, "Index"),
   DELETE(ButtonStyle.DANGER, "Delete"),

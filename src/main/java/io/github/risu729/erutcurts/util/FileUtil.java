@@ -7,17 +7,16 @@
 
 package io.github.risu729.erutcurts.util;
 
+import io.github.risu729.erutcurts.Erutcurts;
 import java.io.IOException;
 import java.io.UncheckedIOException;
-import java.nio.file.Files;
 import java.nio.file.FileSystems;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Stream;
-
-import io.github.risu729.erutcurts.Erutcurts;
 
 public final class FileUtil {
 
@@ -42,13 +41,16 @@ public final class FileUtil {
 
   public static void delete(Path path) {
     try (Stream<Path> stream = Files.walk(path)) {
-      stream.sorted(Comparator.reverseOrder()).forEach(p -> {
-        try {
-          Files.deleteIfExists(p);
-        } catch (IOException e) {
-          throw new UncheckedIOException(e);
-        }
-      });
+      stream
+          .sorted(Comparator.reverseOrder())
+          .forEach(
+              p -> {
+                try {
+                  Files.deleteIfExists(p);
+                } catch (IOException e) {
+                  throw new UncheckedIOException(e);
+                }
+              });
     } catch (IOException e) {
       throw new UncheckedIOException(e);
     }

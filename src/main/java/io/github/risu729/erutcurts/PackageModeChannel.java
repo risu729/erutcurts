@@ -7,11 +7,10 @@
 
 package io.github.risu729.erutcurts;
 
-import java.util.concurrent.ScheduledFuture;
 import java.util.Objects;
-
-import net.dv8tion.jda.api.entities.MessageChannel;
+import java.util.concurrent.ScheduledFuture;
 import net.dv8tion.jda.api.JDA;
+import net.dv8tion.jda.api.entities.MessageChannel;
 
 final class PackageModeChannel {
 

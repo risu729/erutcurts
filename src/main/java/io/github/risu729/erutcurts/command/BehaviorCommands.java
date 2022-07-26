@@ -9,6 +9,9 @@ package io.github.risu729.erutcurts.command;
 
 import static io.github.risu729.erutcurts.CustomizedButton.*;
 
+import io.github.risu729.erutcurts.structure.StructureAddon;
+import io.github.risu729.erutcurts.util.AttachmentUtil;
+import io.github.risu729.erutcurts.util.FileUtil;
 import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.nio.file.Path;
@@ -16,19 +19,15 @@ import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
-
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.interactions.components.ActionRow;
 
-import io.github.risu729.erutcurts.structure.StructureAddon;
-import io.github.risu729.erutcurts.util.AttachmentUtil;
-import io.github.risu729.erutcurts.util.FileUtil;
-
 public final class BehaviorCommands {
 
-  private static final ActionRow MULTI_ACTION_ROW = ActionRow.of(
-      SINGLE.toButton(), INDEX.toButton(), DELETE.toButton(), HELP.toButton());
-  private static final ActionRow SINGLE_ACTION_ROW = ActionRow.of(INDEX.toButton(), DELETE.toButton(), HELP.toButton());
+  private static final ActionRow MULTI_ACTION_ROW =
+      ActionRow.of(SINGLE.toButton(), INDEX.toButton(), DELETE.toButton(), HELP.toButton());
+  private static final ActionRow SINGLE_ACTION_ROW =
+      ActionRow.of(INDEX.toButton(), DELETE.toButton(), HELP.toButton());
 
   public static Message replyMulti(Message message, Collection<Path> structures) {
     Path tempDir = FileUtil.createTempDir();
@@ -38,8 +37,9 @@ public final class BehaviorCommands {
     } catch (IOException e) {
       throw new UncheckedIOException(e);
     }
-    var result = AttachmentUtil.replySingleFile(
-        message, packPath, structures.size() == 1 ? SINGLE_ACTION_ROW : MULTI_ACTION_ROW);
+    var result =
+        AttachmentUtil.replySingleFile(
+            message, packPath, structures.size() == 1 ? SINGLE_ACTION_ROW : MULTI_ACTION_ROW);
     FileUtil.delete(tempDir);
     return result;
   }
@@ -52,15 +52,16 @@ public final class BehaviorCommands {
     List<StructureAddon> addons = new LinkedList<>();
     try {
       return packs.stream()
-        .map(p -> {
-            try {
-              var addon = StructureAddon.fromBehavior(p);
-              addons.add(addon);
-              return addon.getStructures();
-            } catch (IOException e) {
-              throw new UncheckedIOException(e);
-            }
-          })
+          .map(
+              p -> {
+                try {
+                  var addon = StructureAddon.fromBehavior(p);
+                  addons.add(addon);
+                  return addon.getStructures();
+                } catch (IOException e) {
+                  throw new UncheckedIOException(e);
+                }
+              })
           .flatMap(Collection::stream)
           .collect(Collectors.collectingAndThen(Collectors.toList(), l -> replySingle(message, l)));
     } finally {

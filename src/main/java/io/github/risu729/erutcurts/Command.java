@@ -15,7 +15,6 @@ import java.util.Optional;
 import java.util.stream.Stream;
 
 public enum Command {
-
   DEBUG(true), // TODO: delete these
   NBT(true),
   HELP("h"),
@@ -30,9 +29,7 @@ public enum Command {
 
   public static Optional<Command> fromString(String command) {
     return Arrays.stream(Command.values())
-        .filter(c -> c.getCommands()
-            .stream()
-            .anyMatch(command::equalsIgnoreCase))
+        .filter(c -> c.getCommands().stream().anyMatch(command::equalsIgnoreCase))
         .findFirst();
   }
 
@@ -47,12 +44,15 @@ public enum Command {
   }
 
   private Command(boolean doIncludeIdentifier, String... commands) {
-    this.commands = Stream.concat(Stream.ofNullable(doIncludeIdentifier ? this.toString().replace("_", "") : null), Arrays.stream(commands))
-        .distinct()
-        .map(s -> s.toLowerCase(Locale.ENGLISH))
-        .sorted(Comparator.comparingInt(String::length).reversed())
-        .map(s -> PREFIX + s)
-        .toList();
+    this.commands =
+        Stream.concat(
+                Stream.ofNullable(doIncludeIdentifier ? this.toString().replace("_", "") : null),
+                Arrays.stream(commands))
+            .distinct()
+            .map(s -> s.toLowerCase(Locale.ENGLISH))
+            .sorted(Comparator.comparingInt(String::length).reversed())
+            .map(s -> PREFIX + s)
+            .toList();
   }
 
   public List<String> getCommands() {

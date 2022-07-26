@@ -17,15 +17,18 @@ public final class SchedulerUtil {
     return newScheduledDaemonThreadPool(corePoolSize, Executors.defaultThreadFactory());
   }
 
-  public static ScheduledExecutorService newScheduledDaemonThreadPool(int corePoolSize, ThreadFactory threadFactory) {
-    return Executors.newScheduledThreadPool(corePoolSize, new ThreadFactory() {
-      @Override
-      public Thread newThread(Runnable runnable) {
-        Thread thread = threadFactory.newThread(runnable);
-        thread.setDaemon(true);
-        return thread;
-      }
-    });
+  public static ScheduledExecutorService newScheduledDaemonThreadPool(
+      int corePoolSize, ThreadFactory threadFactory) {
+    return Executors.newScheduledThreadPool(
+        corePoolSize,
+        new ThreadFactory() {
+          @Override
+          public Thread newThread(Runnable runnable) {
+            Thread thread = threadFactory.newThread(runnable);
+            thread.setDaemon(true);
+            return thread;
+          }
+        });
   }
 
   private SchedulerUtil() {

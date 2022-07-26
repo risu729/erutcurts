@@ -7,24 +7,6 @@
 
 package io.github.risu729.erutcurts;
 
-import java.nio.file.Path;
-import java.time.Duration;
-import java.util.Comparator;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.TreeSet;
-
-import net.dv8tion.jda.api.entities.Message;
-import net.dv8tion.jda.api.entities.MessageChannel;
-import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
-import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
-import net.dv8tion.jda.api.hooks.ListenerAdapter;
-import net.dv8tion.jda.api.utils.TimeUtil;
-
 import io.github.risu729.erutcurts.command.AddonCommands;
 import io.github.risu729.erutcurts.command.BehaviorCommands;
 import io.github.risu729.erutcurts.command.UtilCommands;
@@ -32,7 +14,22 @@ import io.github.risu729.erutcurts.structure.MCExtension;
 import io.github.risu729.erutcurts.util.AttachmentUtil;
 import io.github.risu729.erutcurts.util.FileUtil;
 import io.github.risu729.erutcurts.util.SchedulerUtil;
-
+import java.nio.file.Path;
+import java.time.Duration;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.TreeSet;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
+import net.dv8tion.jda.api.entities.Message;
+import net.dv8tion.jda.api.entities.MessageChannel;
+import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
+import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
+import net.dv8tion.jda.api.hooks.ListenerAdapter;
+import net.dv8tion.jda.api.utils.TimeUtil;
 
 final class Listener extends ListenerAdapter {
 
@@ -42,7 +39,8 @@ final class Listener extends ListenerAdapter {
 
   // key is the ID of sent message
   private final Map<Long, List<Path>> structureCaches = new ConcurrentHashMap<>();
-  private final ScheduledExecutorService cacheDeleteScheduler = SchedulerUtil.newScheduledDaemonThreadPool(5);
+  private final ScheduledExecutorService cacheDeleteScheduler =
+      SchedulerUtil.newScheduledDaemonThreadPool(5);
 
   @Override
   public void onMessageReceived(MessageReceivedEvent event) {
@@ -50,7 +48,7 @@ final class Listener extends ListenerAdapter {
     Message message = event.getMessage();
     MessageChannel channel = event.getChannel();
     boolean isPackageMode = packageManager.isPackageMode(event.getChannel());
-    
+
     // ignore bot messages
     if (message.getAuthor().isBot()) {
       return;
@@ -65,7 +63,8 @@ final class Listener extends ListenerAdapter {
     try {
       switch (command) {
         case DEBUG -> {
-          UtilCommands.replyDebugInfo(message, AttachmentUtil.getSeparatedMessages(message.getReferencedMessage()));
+          UtilCommands.replyDebugInfo(
+              message, AttachmentUtil.getSeparatedMessages(message.getReferencedMessage()));
         }
 
         case NBT -> {
@@ -89,7 +88,8 @@ final class Listener extends ListenerAdapter {
         }
 
         case GENERATE, AUTO_GENERATE -> {
-          TreeSet<Message> targetMessages = new TreeSet<>(Comparator.comparing(Message::getTimeCreated));
+          TreeSet<Message> targetMessages =
+              new TreeSet<>(Comparator.comparing(Message::getTimeCreated));
           targetMessages.add(message);
 
           // add a referenced message
@@ -103,9 +103,10 @@ final class Listener extends ListenerAdapter {
             packageManager.disablePackageMode(channel);
           }
 
-         Path cacheDir;
+          Path cacheDir;
           cacheDir = FileUtil.createTempDir();
-          List<Path> structures = AttachmentUtil.download(targetMessages, cacheDir, MCExtension.MCSTRUCTURE.toString());
+          List<Path> structures =
+              AttachmentUtil.download(targetMessages, cacheDir, MCExtension.MCSTRUCTURE.toString());
           if (structures.isEmpty()) {
             if (command == Command.GENERATE) {
               throw new IllegalArgumentException("No structure files are found");
@@ -118,21 +119,27 @@ final class Listener extends ListenerAdapter {
             reference = message;
           } else {
             // reply to the first message contains structures in target messages
-            reference = targetMessages.stream()
-                .filter(m -> !m.getAuthor().isBot())
-                .filter(m -> m.getAttachments().stream()
-                    .map(Message.Attachment::getFileExtension)
-                    .anyMatch(MCExtension.MCSTRUCTURE.toString()::equalsIgnoreCase))
-                .findFirst()
-                .orElseThrow();
+            reference =
+                targetMessages.stream()
+                    .filter(m -> !m.getAuthor().isBot())
+                    .filter(
+                        m ->
+                            m.getAttachments().stream()
+                                .map(Message.Attachment::getFileExtension)
+                                .anyMatch(MCExtension.MCSTRUCTURE.toString()::equalsIgnoreCase))
+                    .findFirst()
+                    .orElseThrow();
           }
 
           Message sentMessage = BehaviorCommands.replyMulti(reference, structures);
           structureCaches.put(sentMessage.getIdLong(), structures);
-          cacheDeleteScheduler.schedule(() -> {
-            structureCaches.remove(sentMessage.getIdLong());
-            FileUtil.delete(cacheDir);
-          }, WAIT_CACHE_DELETION.toMinutes(), TimeUnit.MINUTES);
+          cacheDeleteScheduler.schedule(
+              () -> {
+                structureCaches.remove(sentMessage.getIdLong());
+                FileUtil.delete(cacheDir);
+              },
+              WAIT_CACHE_DELETION.toMinutes(),
+              TimeUnit.MINUTES);
         }
         default -> throw new UnsupportedOperationException("Unsuppported Command: " + command);
       }
@@ -146,15 +153,14 @@ final class Listener extends ListenerAdapter {
   public void onButtonInteraction(ButtonInteractionEvent event) {
     // avoid "This interaction failed"
     event.deferEdit().queue();
-    
+
     Message message = event.getMessage();
     MessageChannel channel = event.getChannel();
 
     CustomizedButton button = CustomizedButton.fromID(event.getComponentId()).orElseThrow();
-    
+
     try {
       switch (button) {
-
         case HELP -> UtilCommands.replyHelp(message);
 
         case SINGLE -> {
@@ -163,18 +169,24 @@ final class Listener extends ListenerAdapter {
             return;
           }
           Path cacheDir = FileUtil.createTempDir();
-          BehaviorCommands.replySingleFromBehaviors(message, AttachmentUtil.download(message, cacheDir, MCExtension.MCPACK.toString()));
+          BehaviorCommands.replySingleFromBehaviors(
+              message, AttachmentUtil.download(message, cacheDir, MCExtension.MCPACK.toString()));
           FileUtil.delete(cacheDir);
         }
 
         case INDEX -> {
           Path cacheDir = FileUtil.createTempDir();
-          AddonCommands.replyIndex(message, AttachmentUtil.download(AttachmentUtil.getSeparatedMessages(message),
-              cacheDir, MCExtension.MCPACK.toString()));
+          AddonCommands.replyIndex(
+              message,
+              AttachmentUtil.download(
+                  AttachmentUtil.getSeparatedMessages(message),
+                  cacheDir,
+                  MCExtension.MCPACK.toString()));
           FileUtil.delete(cacheDir);
         }
 
-        case OK, DELETE -> AttachmentUtil.getSeparatedMessages(message).stream().forEach(UtilCommands::deleteMessage);
+        case OK, DELETE -> AttachmentUtil.getSeparatedMessages(message).stream()
+            .forEach(UtilCommands::deleteMessage);
 
         case OK_LONG_STANDBY -> {
           packageManager.disablePackageMode(channel);
