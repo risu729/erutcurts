@@ -14,7 +14,7 @@
       <id>github</id>
       <repositories>
         <repository>
-          <id>github</id>
+          <id>github-mcbe-manifest4j</id>
           <name>mcbe-manifest4j</name>
           <url>https://maven.pkg.github.com/risu729/mcbe-manifest4j</url>
           <snapshots>
@@ -22,8 +22,8 @@
           </snapshots>
         </repository>
         <repository>
-          <id>github</id>
-          <name>opennbt</name>
+          <id>github-opennbt</id>
+          <name>OpenNBT</name>
           <url>https://maven.pkg.github.com/risu729/opennbt</url>
           <snapshots>
             <enabled>true</enabled>
@@ -35,7 +35,12 @@
 
   <servers>
     <server>
-      <id>github</id>
+      <id>github-mcbe-manifest4j</id>
+      <username>${GITHUB_USERNAME}</username>
+      <password>${GITHUB_TOKEN}</password>
+    </server>
+    <server>
+      <id>github-opennbt</id>
       <username>${GITHUB_USERNAME}</username>
       <password>${GITHUB_TOKEN}</password>
     </server>
