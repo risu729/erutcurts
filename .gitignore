@@ -1,8 +1,6 @@
 # Replit config files
 .replit
 replit.nix
-
-# Replit eclipse config files
 target/
 .settings
 .classpath
