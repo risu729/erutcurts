@@ -23,11 +23,11 @@ jobs:
         
       - name: Download Actionlint
         id: actionlint
-        if: ${{ steps.filter.outputs.action == 'true' }}
-        run: curl https://raw.githubusercontent.com/rhysd/actionlint/main/scripts/download-actionlint.bash
+        if: steps.filter.outputs.action == 'true'
+        run: bash <(curl https://raw.githubusercontent.com/rhysd/actionlint/main/scripts/download-actionlint.bash)
         shell: bash
 
       - name: Check workflow files
-        if: ${{ steps.filter.outputs.action == 'true' }}
+        if: steps.filter.outputs.action == 'true'
         run: ${{ steps.actionlint.outputs.executable }} -color
         shell: bash
