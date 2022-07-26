@@ -26,7 +26,7 @@ final class NBTTest {
     Path cacheDir = FileUtil.createTempDir();
     try {
       Path file = cacheDir.resolve(Path.of("NBT.txt"));
-      SNBTIO.writeFile(NBTIO.readFile(nbt.toFile(), false, true), file, true);
+      SNBTIO.writeFile(NBTIO.readFile(nbt.toFile(), false, true), file.toFile(), true);
       AttachmentUtil.replySingleFile(message, file, ActionRow.of(CustomizedButton.DELETE.toButton()));
     } catch (IOException e) {
       throw new UncheckedIOException(e);
