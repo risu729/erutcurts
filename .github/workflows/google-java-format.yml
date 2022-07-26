@@ -18,15 +18,11 @@ jobs:
         id: filter
         with:
           filters: |
-            src:
-              - 'src/**'
-
-      - name: Lint Markdown
-        
-        run: npm run lint:md
+            java:
+              - '**/*.java'
    
       - name: Setup Java JDK
-        if: ${{ steps.filter.outputs.src == true }}
+        if: steps.filter.outputs.java == 'true'
         uses: actions/setup-java@v3
         with:
           java-version: 17
@@ -34,7 +30,7 @@ jobs:
           cache: maven
   
       - name: Google Java Format
-        if: ${{ steps.filter.outputs.src == true }}
+        if: steps.filter.outputs.java == 'true'
         uses: axel-op/googlejavaformat-action@v3
         with:
           githubToken: ${{ secrets.GITHUB_TOKEN }}
