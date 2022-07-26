@@ -41,6 +41,8 @@ jobs:
           filters: |
             main:
               - 'src/main/**'
+              - pom.xml
+              - settings.xml
    
       - name: Setup Java JDK
         if: ${{ steps.filter.outputs.main == 'true' }}
