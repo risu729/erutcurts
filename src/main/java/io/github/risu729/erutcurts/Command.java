@@ -7,12 +7,12 @@
 
 package io.github.risu729.erutcurts;
 
+import java.util.stream.Stream;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
-import java.util.stream.Stream;
 
 public enum Command {
   DEBUG(true), // TODO: delete these
@@ -35,15 +35,15 @@ public enum Command {
 
   private final List<String> commands;
 
-  private Command(boolean doIncludeIdentifier) {
+  Command(boolean doIncludeIdentifier) {
     this(doIncludeIdentifier, new String[0]);
   }
 
-  private Command(String... commands) {
+  Command(String... commands) {
     this(true, commands);
   }
 
-  private Command(boolean doIncludeIdentifier, String... commands) {
+  Command(boolean doIncludeIdentifier, String... commands) {
     this.commands =
         Stream.concat(
                 Stream.ofNullable(doIncludeIdentifier ? this.toString().replace("_", "") : null),
