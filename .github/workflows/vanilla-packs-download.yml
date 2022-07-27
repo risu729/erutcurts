@@ -52,7 +52,7 @@ jobs:
       - name: Push
         run: |
           git add --all
-          git commit
+          git commit -m 1.19.10
           git push
         shell: bash
           
