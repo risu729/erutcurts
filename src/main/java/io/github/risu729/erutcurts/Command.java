@@ -7,12 +7,12 @@
 
 package io.github.risu729.erutcurts;
 
-import java.util.stream.Stream;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
+import java.util.stream.Stream;
 
 public enum Command {
   DEBUG(true), // TODO: delete these
