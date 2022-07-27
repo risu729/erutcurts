@@ -1,0 +1,58 @@
+name: Vanilla Packs Download
+
+on:
+  schedule:
+    - cron: '00 22 * * 4'
+  workflow_dispatch:
+
+jobs:
+  download:
+    runs-on: ubuntu-latest
+    env:
+      BEHAVIOR: src/main/resources/vanilla_packs/behavior
+      BEHAVIOR_TEMP: ./tmp/behavior.zip
+      RESOURCE: src/main/resources/vanilla_packs/resource
+      RESOURCE_TEMP: ./tmp/resource.zip
+    
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Create Directories
+        run: |
+          mkdir -p ./tmp
+          mkdir -p $BEHAVIOR
+          mkdir -p $RESOURCE
+        shell: bash
+
+      - name: Clean Directories
+        run: |
+          rm -rf $BEHAVIOR
+          rm -rf $RESOURCE
+        shell: bash
+
+      - name: Download
+        run: |
+          curl -L https://aka.ms/behaviorpacktemplate -o $BEHAVIOR_TEMP
+          curl -L https://aka.ms/resourcepacktemplate -o $RESOURCE_TEMP
+        shell: bash
+
+      - name: Unzip
+        run: |
+          unzip $BEHAVIOR_TEMP -d $BEHAVIOR
+          unzip $RESOURCE_TEMP -d $RESOURCE
+        shell: bash
+
+      - name: Setup Git Configs
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+        shell: bash
+
+      - name: Push
+        run: |
+          git add --all
+          git commit
+          git push
+        shell: bash
+          
