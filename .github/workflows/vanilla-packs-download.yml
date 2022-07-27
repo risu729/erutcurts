@@ -20,6 +20,17 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
 
+      - name: Download to Temp
+        run: |
+          wget --content-disposition -P ./tmp https://aka.ms/behaviorpacktemplate
+          wget --content-disposition -P ./tmp https://aka.ms/resourcepacktemplate
+
+      - name: Check Update
+        run: |
+        if: github.event_name != 'workflow_dispatch'
+          
+        id: check
+
       - name: Get Version
         run: |
           filename=$(curl -I $BEHAVIOR_URL)
