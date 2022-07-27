@@ -9,14 +9,22 @@ jobs:
   download:
     runs-on: ubuntu-latest
     env:
-      BEHAVIOR: src/main/resources/vanilla_packs/behavior
+      BEHAVIOR_URL: https://aka.ms/behaviorpacktemplate
+      BEHAVIOR_DIR: src/main/resources/vanilla_packs/behavior
       BEHAVIOR_TEMP: ./tmp/behavior.zip
-      RESOURCE: src/main/resources/vanilla_packs/resource
+      RESOURCE_URL: https://aka.ms/resourcepacktemplate
+      RESOURCE_DIR: src/main/resources/vanilla_packs/resource
       RESOURCE_TEMP: ./tmp/resource.zip
     
     steps:
       - name: Checkout
         uses: actions/checkout@v3
+
+      - name: Get Version
+        run: |
+          filename=$(curl -I $BEHAVIOR_URL)
+          echo "::set-output name=version::${filename#Vanilla-Behavior_Pack_%.zip}"
+        id: version
 
       - name: Create Directories
         run: |
@@ -31,8 +39,8 @@ jobs:
 
       - name: Download
         run: |
-          curl -L https://aka.ms/behaviorpacktemplate -o $BEHAVIOR_TEMP
-          curl -L https://aka.ms/resourcepacktemplate -o $RESOURCE_TEMP
+          curl -L $BEHAVIOR_URL -o $BEHAVIOR_TEMP
+          curl -L $RESOURCE_URL -o $RESOURCE_TEMP
 
       - name: Unzip
         run: |
@@ -47,5 +55,5 @@ jobs:
       - name: Push
         run: |
           git add .
-          git commit -m 1.19.10
+          git commit -m "Vanilla Packs Update ${{ steps.version.outputs.version }}"
           git push origin main
