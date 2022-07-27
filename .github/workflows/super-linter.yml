@@ -23,9 +23,17 @@ jobs:
           # Full git history is needed to get a proper list of changed files within `super-linter`
           fetch-depth: 0
 
-      - name: Super Linter
-        uses: github/super-linter@v4
+      - name: Super Linter Slim
+        if: github.event_name != 'workflow_dispatch'
+        uses: github/super-linter/slim@v4
         env:
           VALIDATE_ALL_CODEBASE: false
+          DEFAULT_BRANCH: main
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Super Linter Standard
+        if: github.event_name == 'workflow_dispatch'
+        uses: github/super-linter@v4
+        env:
           DEFAULT_BRANCH: main
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
