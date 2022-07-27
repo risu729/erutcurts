@@ -23,36 +23,29 @@ jobs:
           mkdir -p ./tmp
           mkdir -p $BEHAVIOR
           mkdir -p $RESOURCE
-        shell: bash
 
       - name: Clean Directories
         run: |
           rm -rf $BEHAVIOR
           rm -rf $RESOURCE
-        shell: bash
 
       - name: Download
         run: |
           curl -L https://aka.ms/behaviorpacktemplate -o $BEHAVIOR_TEMP
           curl -L https://aka.ms/resourcepacktemplate -o $RESOURCE_TEMP
-        shell: bash
 
       - name: Unzip
         run: |
           unzip $BEHAVIOR_TEMP -d $BEHAVIOR
           unzip $RESOURCE_TEMP -d $RESOURCE
-        shell: bash
 
       - name: Setup Git Configs
         run: |
-          git config --local user.email "action@github.com"
-          git config --local user.name "GitHub Action"
-        shell: bash
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
 
       - name: Push
         run: |
-          git add --all
+          git add .
           git commit -m 1.19.10
-          git push
-        shell: bash
-          
+          git push origin main
