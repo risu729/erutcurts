@@ -29,13 +29,13 @@ jobs:
       - name: Create Directories
         run: |
           mkdir -p ./tmp
-          mkdir -p $BEHAVIOR_PATH
-          mkdir -p $RESOURCE_PATH
+          mkdir -p $BEHAVIOR_DIR
+          mkdir -p $RESOURCE_DIR
 
       - name: Clean Directories
         run: |
-          rm -rf $BEHAVIOR_PATH
-          rm -rf $RESOURCE_PATH
+          rm -rf $BEHAVIOR_DIR
+          rm -rf $RESOURCE_DIR
 
       - name: Download
         run: |
@@ -44,8 +44,8 @@ jobs:
 
       - name: Unzip
         run: |
-          unzip $BEHAVIOR_TEMP -d $BEHAVIOR_PATH
-          unzip $RESOURCE_TEMP -d $RESOURCE_PATH
+          unzip $BEHAVIOR_TEMP -d $BEHAVIOR_DIR
+          unzip $RESOURCE_TEMP -d $RESOURCE_DIR
 
       - name: Setup Git Configs
         run: |
