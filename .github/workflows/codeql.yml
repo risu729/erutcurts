@@ -24,44 +24,43 @@ jobs:
     permissions:
       security-events: write
 
-    strategy:
-      matrix:
-        language: [ java ]
-
     steps:
       - name: Checkout
         uses: actions/checkout@v3
         
       - name: Paths Changes Filter
         uses: dorny/paths-filter@v2
-        id: filter
         with:
           filters: |
             main:
               - 'src/main/**'
               - pom.xml
               - settings.xml
+        id: filter
+        if: |
+          github.event_name != 'workflow_dispatch' &&
+          github.event_name != 'schedule'
    
       - name: Setup Java JDK
-        if: |
-          steps.filter.outputs.main == 'true' ||
-          github.event_name == 'workflow_dispatch' ||
-          github.event_name == 'schedule'
         uses: actions/setup-java@v3
         with:
           java-version: 17
           distribution: zulu
           cache: maven
-
-      # Initializes the CodeQL tools for scanning.
-      - name: Initialize CodeQL
         if: |
           steps.filter.outputs.main == 'true' ||
           github.event_name == 'workflow_dispatch' ||
           github.event_name == 'schedule'
+
+      # Initializes the CodeQL tools for scanning.
+      - name: Initialize CodeQL
         uses: github/codeql-action/init@v2
         with:
-          languages: ${{ matrix.language }}
+          languages: java
+        if: |
+          steps.filter.outputs.main == 'true' ||
+          github.event_name == 'workflow_dispatch' ||
+          github.event_name == 'schedule'
         # If you wish to specify custom queries, you can do so here or in a config file.
         # By default, queries listed here will override any specified in a config file.
         # Prefix the list here with "+" to use these queries and those in the config file.
@@ -70,18 +69,18 @@ jobs:
         # queries: security-extended,security-and-quality
 
       - name: Build with Maven
-        if: |
-          steps.filter.outputs.main == 'true' ||
-          github.event_name == 'workflow_dispatch' ||
-          github.event_name == 'schedule'
         run: mvn -s settings.xml -B package --file pom.xml
         env:
           GITHUB_USERNAME: github.repository_owner
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Perform CodeQL Analysis
         if: |
           steps.filter.outputs.main == 'true' ||
           github.event_name == 'workflow_dispatch' ||
           github.event_name == 'schedule'
+
+      - name: Perform CodeQL Analysis
         uses: github/codeql-action/analyze@v2
+        if: |
+          steps.filter.outputs.main == 'true' ||
+          github.event_name == 'workflow_dispatch' ||
+          github.event_name == 'schedule'
