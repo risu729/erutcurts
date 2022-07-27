@@ -15,11 +15,12 @@ jobs:
         
       - name: Paths Changes Filter
         uses: dorny/paths-filter@v2
-        id: filter
         with:
           filters: |
             java:
               - '**/*.java'
+        id: filter
+        if: github.event_name != 'workflow_dispatch'
    
       - name: Setup Java JDK
         if: |
