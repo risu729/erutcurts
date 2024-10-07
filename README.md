@@ -1,5 +1,3 @@
-**NEW VERSION IS AVAILABLE HERE https://github.com/risu729/erutcurts**
-
 # Erutcurts
 
 Discord bot supports Minecraft Bedrock Tech Community.
